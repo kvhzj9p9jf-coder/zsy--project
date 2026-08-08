@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +9,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-
     * {
       box-sizing: border-box;
     }
@@ -24,7 +22,6 @@
         BlinkMacSystemFont,
         "Segoe UI",
         "PingFang SC",
-        "Hiragino Sans GB",
         "Microsoft YaHei",
         sans-serif;
     }
@@ -39,102 +36,30 @@
       cursor: pointer;
     }
 
-    /* =========================
-       页面
-    ========================= */
-
     .page {
       width: 100%;
       max-width: 900px;
       margin: 0 auto;
-      padding: 16px 12px 50px;
+      padding: 14px 12px 50px;
     }
-
-
-    /* =========================
-       登录页面
-    ========================= */
-
-    #authPage {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      background: #f8fcf9;
-    }
-
-    .auth-card {
-      width: 100%;
-      max-width: 390px;
-      background: white;
-      border: 1px solid #dcefe3;
-      border-radius: 20px;
-      padding: 25px;
-      box-shadow: 0 8px 30px rgba(70, 130, 90, 0.08);
-    }
-
-    .auth-logo {
-      text-align: center;
-      font-size: 30px;
-      margin-bottom: 5px;
-    }
-
-    .auth-title {
-      text-align: center;
-      color: #26734a;
-      margin: 0 0 5px;
-      font-size: 25px;
-    }
-
-    .auth-subtitle {
-      text-align: center;
-      color: #8a9a91;
-      font-size: 14px;
-      margin-bottom: 25px;
-    }
-
-    .auth-card input {
-      margin-bottom: 10px;
-    }
-
-    .auth-card button {
-      width: 100%;
-      margin-top: 5px;
-    }
-
-    .switch-auth {
-      margin-top: 15px;
-      text-align: center;
-      color: #71857a;
-      font-size: 14px;
-    }
-
-    .switch-auth button {
-      width: auto;
-      margin: 0;
-      padding: 0;
-      background: transparent;
-      color: #31794e;
-    }
-
 
     /* =========================
        顶部
     ========================= */
 
     .topbar {
-      background: #ffffff;
-      border: 1px solid #dcefe3;
-      border-radius: 16px;
-      padding: 14px 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 3px 15px rgba(70, 130, 90, 0.06);
-
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+
+      background: #ffffff;
+      border: 1px solid #dcefe3;
+      border-radius: 16px;
+
+      padding: 14px 16px;
+      margin-bottom: 16px;
+
+      box-shadow: 0 3px 15px rgba(70, 130, 90, 0.06);
     }
 
     .site-title {
@@ -143,28 +68,29 @@
       color: #26734a;
     }
 
-    .site-subtitle {
-      margin-top: 3px;
-      font-size: 12px;
-      color: #8b9c92;
+    .login-button {
+      background: #63b783;
+      color: white;
+      border: 0;
+      border-radius: 10px;
+      padding: 9px 15px;
+      font-weight: 600;
     }
 
+    .login-button:hover {
+      background: #4fa66f;
+    }
 
     /* =========================
-       头像按钮
+       用户头像
     ========================= */
 
-    .profile-wrapper {
-      position: relative;
-    }
-
-    .profile-button {
-      width: 42px;
-      height: 42px;
-      min-width: 42px;
+    .avatar-button {
+      width: 40px;
+      height: 40px;
 
       border-radius: 50%;
-      padding: 0;
+      border: 0;
 
       background: #63b783;
       color: white;
@@ -173,118 +99,170 @@
       align-items: center;
       justify-content: center;
 
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 700;
+
+      padding: 0;
     }
 
-    .profile-button:hover {
-      background: #4fa66f;
-    }
+    /* =========================
+       用户菜单
+    ========================= */
 
-    .profile-menu {
-      display: none;
-
+    .user-menu {
       position: absolute;
-      right: 0;
-      top: 50px;
 
-      width: 220px;
+      right: 12px;
+      top: 65px;
+
+      width: 230px;
 
       background: white;
+
       border: 1px solid #dcefe3;
       border-radius: 14px;
 
-      padding: 15px;
+      padding: 14px;
 
-      box-shadow:
-        0 10px 30px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+
+      display: none;
 
       z-index: 100;
     }
 
-    .profile-menu.show {
+    .user-menu.show {
       display: block;
     }
 
-    .profile-menu-name {
+    .user-menu-name {
       font-weight: 700;
       color: #31794e;
-      font-size: 16px;
-      margin-bottom: 5px;
+      margin-bottom: 4px;
     }
 
-    .profile-menu-email {
-      font-size: 11px;
-      color: #9aa89f;
+    .user-menu-email {
+      font-size: 12px;
+      color: #8b9c92;
       word-break: break-all;
       margin-bottom: 12px;
     }
 
-    .profile-menu button {
+    .logout-button {
       width: 100%;
+
+      border: 0;
+      border-radius: 9px;
+
+      padding: 9px;
+
+      background: #f2eeee;
+      color: #8a5555;
+
+      font-weight: 600;
     }
 
-
-    /* =========================
-       发帖
-    ========================= */
-
-    .create-post {
-      background: #ffffff;
-      border: 1px solid #dcefe3;
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 3px 15px rgba(70, 130, 90, 0.06);
+    .logout-button:hover {
+      background: #eadfdf;
     }
-
-    .section-title {
-      margin: 0 0 12px;
-      font-size: 18px;
-      color: #26734a;
-    }
-
-    .create-post textarea {
-      margin-top: 9px;
-      min-height: 130px;
-      resize: vertical;
-    }
-
-    .create-actions {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 10px;
-    }
-
 
     /* =========================
        帖子
     ========================= */
 
-    .posts {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
+    .create-post,
     .post {
       background: #ffffff;
+
       border: 1px solid #dcefe3;
       border-radius: 16px;
+
       padding: 16px;
+      margin-bottom: 16px;
+
       box-shadow: 0 3px 15px rgba(70, 130, 90, 0.05);
     }
+
+    .section-title {
+      margin: 0 0 12px;
+
+      font-size: 18px;
+      color: #26734a;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+
+      border: 1px solid #d8e9df;
+      border-radius: 10px;
+
+      padding: 11px 12px;
+
+      outline: none;
+
+      background: #ffffff;
+      color: #26352d;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: #69b987;
+
+      box-shadow:
+        0 0 0 3px
+        rgba(105, 185, 135, 0.12);
+    }
+
+    .create-post textarea {
+      margin-top: 9px;
+
+      min-height: 130px;
+
+      resize: vertical;
+    }
+
+    .create-actions {
+      display: flex;
+
+      justify-content: flex-end;
+
+      margin-top: 10px;
+    }
+
+    .primary-button {
+      border: 0;
+      border-radius: 10px;
+
+      padding: 10px 16px;
+
+      background: #63b783;
+      color: white;
+
+      font-weight: 600;
+    }
+
+    .primary-button:hover {
+      background: #4fa66f;
+    }
+
+    /* =========================
+       帖子头部
+    ========================= */
 
     .post-header,
     .comment-header {
       display: flex;
+
       align-items: center;
+
       gap: 9px;
     }
 
     .avatar {
       width: 38px;
       height: 38px;
+
       min-width: 38px;
 
       border-radius: 50%;
@@ -296,6 +274,7 @@
       justify-content: center;
 
       color: white;
+
       font-size: 17px;
       font-weight: 700;
     }
@@ -303,7 +282,9 @@
     .comment .avatar {
       width: 31px;
       height: 31px;
+
       min-width: 31px;
+
       font-size: 14px;
     }
 
@@ -314,7 +295,9 @@
 
     .time {
       margin-top: 2px;
+
       color: #8b9c92;
+
       font-size: 12px;
     }
 
@@ -322,7 +305,9 @@
       margin: 14px 0 8px;
 
       color: #26352d;
+
       font-size: 20px;
+
       line-height: 1.4;
 
       word-break: break-word;
@@ -330,79 +315,89 @@
 
     .post-content {
       color: #52645a;
+
       font-size: 15px;
+
       line-height: 1.75;
 
       white-space: pre-wrap;
+
       word-break: break-word;
     }
 
-
     /* =========================
-       操作栏
+       帖子操作栏
     ========================= */
 
     .post-actions {
       display: flex;
+
       align-items: center;
+
       gap: 8px;
 
-      margin-top: 15px;
-      padding-top: 12px;
-
-      border-top: 1px solid #edf4ef;
+      margin-top: 16px;
     }
 
     .like-button {
-      background: #f4faf6;
-      color: #4c765d;
+      border: 1px solid #dcefe3;
+
+      background: #ffffff;
+
+      color: #567263;
+
+      border-radius: 10px;
 
       padding: 7px 12px;
 
-      border: 1px solid #e1eee5;
-      border-radius: 9px;
-
-      font-weight: 500;
+      font-weight: 600;
     }
 
     .like-button:hover {
-      background: #e6f5eb;
+      background: #edf8f1;
     }
 
     .like-button.liked {
-      background: #e1f4e7;
-      color: #26734a;
-      border-color: #bfe2ca;
-    }
+      background: #edf8f1;
 
-    .like-count {
-      margin-left: 3px;
-    }
+      color: #31794e;
 
+      border-color: #b9dec7;
+    }
 
     /* =========================
        评论
     ========================= */
 
     .comments {
-      margin-top: 15px;
+      margin-top: 18px;
+
       padding-top: 14px;
+
       border-top: 1px solid #edf4ef;
     }
 
     .comment-input-row {
       display: flex;
+
       gap: 8px;
+
       margin-bottom: 12px;
     }
 
     .comment-input-row input {
       flex: 1;
+
       min-width: 0;
+    }
+
+    .comment-send {
+      white-space: nowrap;
     }
 
     .comment {
       padding: 10px 0;
+
       border-bottom: 1px solid #f0f4f1;
     }
 
@@ -412,13 +407,15 @@
 
     .comment-content {
       margin: 6px 0 0 40px;
+
       color: #52645a;
+
       line-height: 1.6;
 
       white-space: pre-wrap;
+
       word-break: break-word;
     }
-
 
     /* =========================
        状态
@@ -426,29 +423,33 @@
 
     .empty {
       text-align: center;
+
       padding: 35px 10px;
 
       color: #8a9a91;
 
       border: 1px dashed #d8e9df;
+
       border-radius: 14px;
     }
 
     .loading {
       text-align: center;
+
       padding: 30px;
+
       color: #759080;
     }
 
-
     /* =========================
-       弹窗
+       登录弹窗
     ========================= */
 
     .modal-mask {
       display: none;
 
       position: fixed;
+
       inset: 0;
 
       background: rgba(20, 40, 28, 0.25);
@@ -461,9 +462,14 @@
       z-index: 999;
     }
 
+    .modal-mask.show {
+      display: flex;
+    }
+
     .modal {
       width: 100%;
-      max-width: 350px;
+
+      max-width: 370px;
 
       background: white;
 
@@ -471,28 +477,72 @@
 
       padding: 22px;
 
-      text-align: center;
-
-      box-shadow:
-        0 12px 40px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
     }
 
     .modal h3 {
-      margin: 0 0 8px;
+      margin: 0 0 15px;
+
       color: #31794e;
+
+      text-align: center;
     }
 
-    .modal p {
-      color: #66776d;
-      font-size: 14px;
-      line-height: 1.6;
+    .modal input {
+      margin-bottom: 9px;
     }
 
-    .modal button {
+    .modal-actions {
+      display: grid;
+
+      grid-template-columns: 1fr 1fr;
+
+      gap: 8px;
+
+      margin-top: 5px;
+    }
+
+    .secondary-button {
+      border: 0;
+
+      border-radius: 10px;
+
+      padding: 10px;
+
+      background: #edf8f1;
+
+      color: #31794e;
+
+      font-weight: 600;
+    }
+
+    .close-button {
+      width: 100%;
+
       margin-top: 8px;
-      min-width: 100px;
+
+      border: 0;
+
+      border-radius: 10px;
+
+      padding: 9px;
+
+      background: #f2f4f2;
+
+      color: #66776d;
     }
 
+    .modal-message {
+      margin-top: 10px;
+
+      color: #8a5555;
+
+      font-size: 13px;
+
+      line-height: 1.5;
+
+      display: none;
+    }
 
     /* =========================
        手机
@@ -515,213 +565,94 @@
         font-size: 20px;
       }
 
-      .post-title {
-        font-size: 18px;
-      }
-
       .comment-input-row {
         flex-direction: column;
       }
 
-      .comment-input-row button {
+      .comment-send {
         width: 100%;
       }
 
+      .post-title {
+        font-size: 18px;
+      }
     }
-
   </style>
-
 </head>
-
 
 <body>
 
+<div class="page">
 
-<!-- =====================================================
-     登录 / 注册页面
-===================================================== -->
+  <!-- =========================
+       顶部
+  ========================= -->
 
-<div id="authPage">
+  <div class="topbar">
 
-  <div class="auth-card">
-
-    <div class="auth-logo">
-      🌿
-    </div>
-
-    <h1 class="auth-title">
-      简易论坛
+    <h1 class="site-title">
+      🌿 简易论坛
     </h1>
 
-    <div class="auth-subtitle" id="authSubtitle">
-      登录后开始交流
-    </div>
-
-
-    <input
-      id="authNickname"
-      type="text"
-      maxlength="30"
-      placeholder="昵称"
-      autocomplete="username"
-    >
-
-
-    <input
-      id="authPassword"
-      type="password"
-      maxlength="72"
-      placeholder="密码（至少 6 位）"
-      autocomplete="current-password"
-    >
-
-
-    <button
-      id="authMainButton"
-      onclick="handleAuth()"
-    >
-      登录
-    </button>
-
-
-    <div class="switch-auth">
-
-      <span id="switchText">
-        还没有账号？
-      </span>
+    <div id="authArea">
 
       <button
-        onclick="switchAuthMode()"
-        id="switchButton"
+        class="login-button"
+        onclick="openLoginModal()"
       >
-        注册账号
+        登录 / 注册
       </button>
 
     </div>
 
   </div>
 
-</div>
 
+  <!-- =========================
+       发帖
+  ========================= -->
 
+  <div class="create-post">
 
-<!-- =====================================================
-     论坛页面
-===================================================== -->
+    <h2 class="section-title">
+      发布新帖子
+    </h2>
 
-<div id="forumPage" style="display:none;">
-
-  <div class="page">
-
-
-    <!-- 顶部 -->
-
-    <div class="topbar">
-
-      <div>
-
-        <h1 class="site-title">
-          🌿 简易论坛
-        </h1>
-
-        <div class="site-subtitle">
-          分享你的想法
-        </div>
-
-      </div>
-
-
-      <!-- 右上角头像 -->
-
-      <div class="profile-wrapper">
-
-        <button
-          class="profile-button"
-          onclick="toggleProfileMenu()"
-          id="profileAvatar"
-        >
-          ?
-        </button>
-
-
-        <div
-          class="profile-menu"
-          id="profileMenu"
-        >
-
-          <div
-            class="profile-menu-name"
-            id="profileMenuName"
-          >
-            用户
-          </div>
-
-          <div
-            class="profile-menu-email"
-            id="profileMenuEmail"
-          >
-          </div>
-
-          <button
-            class="danger"
-            onclick="logout()"
-          >
-            退出登录
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <!-- 发帖 -->
-
-    <div class="create-post">
-
-      <h2 class="section-title">
-        发布新帖子
-      </h2>
-
-
-      <input
-        id="postTitle"
-        type="text"
-        maxlength="200"
-        placeholder="帖子标题"
-      >
-
-
-      <textarea
-        id="postContent"
-        maxlength="10000"
-        placeholder="写下你想分享的内容..."
-      ></textarea>
-
-
-      <div class="create-actions">
-
-        <button onclick="createPost()">
-          发布帖子
-        </button>
-
-      </div>
-
-    </div>
-
-
-    <!-- 帖子 -->
-
-    <div
-      id="posts"
-      class="posts"
+    <input
+      id="postTitle"
+      type="text"
+      maxlength="200"
+      placeholder="帖子标题"
     >
 
-      <div class="loading">
-        正在加载帖子...
-      </div>
+    <textarea
+      id="postContent"
+      maxlength="10000"
+      placeholder="写下你想分享的内容..."
+    ></textarea>
 
+    <div class="create-actions">
+
+      <button
+        class="primary-button"
+        onclick="createPost()"
+      >
+        发布帖子
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       帖子
+  ========================= -->
+
+  <div id="posts">
+
+    <div class="loading">
+      正在加载帖子...
     </div>
 
   </div>
@@ -729,28 +660,98 @@
 </div>
 
 
-
-<!-- =====================================================
-     弹窗
-===================================================== -->
+<!-- =========================
+     用户菜单
+========================= -->
 
 <div
-  id="modalMask"
+  id="userMenu"
+  class="user-menu"
+>
+
+  <div
+    id="menuNickname"
+    class="user-menu-name"
+  >
+    用户
+  </div>
+
+  <div
+    id="menuEmail"
+    class="user-menu-email"
+  >
+    已登录
+  </div>
+
+  <button
+    class="logout-button"
+    onclick="logout()"
+  >
+    退出登录
+  </button>
+
+</div>
+
+
+<!-- =========================
+     登录弹窗
+========================= -->
+
+<div
+  id="loginModal"
   class="modal-mask"
 >
 
   <div class="modal">
 
     <h3>
-      提示
+      🌿 登录论坛
     </h3>
 
-    <p id="modalText">
-      操作失败。
-    </p>
+    <input
+      id="nicknameInput"
+      type="text"
+      maxlength="30"
+      placeholder="昵称"
+      autocomplete="username"
+    >
 
-    <button onclick="closeModal()">
-      知道了
+    <input
+      id="passwordInput"
+      type="password"
+      maxlength="72"
+      placeholder="密码"
+      autocomplete="current-password"
+    >
+
+    <div class="modal-actions">
+
+      <button
+        class="primary-button"
+        onclick="login()"
+      >
+        登录
+      </button>
+
+      <button
+        class="secondary-button"
+        onclick="register()"
+      >
+        注册
+      </button>
+
+    </div>
+
+    <div
+      id="loginMessage"
+      class="modal-message"
+    ></div>
+
+    <button
+      class="close-button"
+      onclick="closeLoginModal()"
+    >
+      取消
     </button>
 
   </div>
@@ -758,9 +759,7 @@
 </div>
 
 
-
 <script>
-
 
 /* =========================================================
    Supabase 配置
@@ -769,13 +768,11 @@
 const SUPABASE_URL =
   "https://hgkiypwuftoebuzkfeyh.supabase.co";
 
-
 const SUPABASE_PUBLISHABLE_KEY =
   "sb_publishable_MPiE7CxF5KB4sJJhD2_ZUg_wXMHpIJ9";
 
 
 const { createClient } = supabase;
-
 
 const db = createClient(
   SUPABASE_URL,
@@ -791,13 +788,9 @@ let currentUser = null;
 
 let profileMap = {};
 
-let likedPostIds = new Set();
-
-let authMode = "login";
-
 
 /* =========================================================
-   工具
+   基础工具
 ========================================================= */
 
 function escapeHTML(value) {
@@ -818,25 +811,6 @@ function escapeHTML(value) {
 }
 
 
-function formatTime(time) {
-
-  if (!time) {
-    return "";
-  }
-
-  return new Date(time).toLocaleString(
-    "zh-CN",
-    {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit"
-    }
-  );
-}
-
-
 function avatarLetter(nickname) {
 
   if (!nickname) {
@@ -850,28 +824,65 @@ function avatarLetter(nickname) {
 }
 
 
-function showModal(message) {
+function formatTime(time) {
 
-  document.getElementById(
-    "modalText"
-  ).textContent = message;
+  if (!time) {
+    return "";
+  }
 
-  document.getElementById(
-    "modalMask"
-  ).style.display = "flex";
-}
-
-
-function closeModal() {
-
-  document.getElementById(
-    "modalMask"
-  ).style.display = "none";
+  return new Date(time)
+    .toLocaleString(
+      "zh-CN",
+      {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      }
+    );
 }
 
 
 /* =========================================================
-   昵称 → 内部邮箱
+   登录弹窗
+========================================================= */
+
+function openLoginModal() {
+
+  document
+    .getElementById("loginModal")
+    .classList.add("show");
+
+  document
+    .getElementById("loginMessage")
+    .style.display = "none";
+}
+
+
+function closeLoginModal() {
+
+  document
+    .getElementById("loginModal")
+    .classList.remove("show");
+}
+
+
+function showLoginMessage(message) {
+
+  const box =
+    document.getElementById(
+      "loginMessage"
+    );
+
+  box.textContent = message;
+
+  box.style.display = "block";
+}
+
+
+/* =========================================================
+   昵称 → Auth 邮箱
 ========================================================= */
 
 async function nicknameToAuthEmail(nickname) {
@@ -881,114 +892,53 @@ async function nicknameToAuthEmail(nickname) {
       nickname.trim().toLowerCase()
     );
 
-
   const hashBuffer =
     await crypto.subtle.digest(
       "SHA-256",
       data
     );
 
-
   const hashArray =
     Array.from(
       new Uint8Array(hashBuffer)
     );
 
-
   const hash =
     hashArray
       .map(
         b =>
-          b
-            .toString(16)
-            .padStart(2, "0")
+          b.toString(16)
+           .padStart(2, "0")
       )
       .join("");
-
 
   return `user-${hash}@forum.local`;
 }
 
 
 /* =========================================================
-   登录 / 注册模式切换
+   注册
 ========================================================= */
 
-function switchAuthMode() {
-
-  if (authMode === "login") {
-
-    authMode = "register";
-
-    document.getElementById(
-      "authSubtitle"
-    ).textContent =
-      "创建账号后开始交流";
-
-    document.getElementById(
-      "authMainButton"
-    ).textContent =
-      "注册";
-
-    document.getElementById(
-      "switchText"
-    ).textContent =
-      "已经有账号？";
-
-    document.getElementById(
-      "switchButton"
-    ).textContent =
-      "返回登录";
-
-  } else {
-
-    authMode = "login";
-
-    document.getElementById(
-      "authSubtitle"
-    ).textContent =
-      "登录后开始交流";
-
-    document.getElementById(
-      "authMainButton"
-    ).textContent =
-      "登录";
-
-    document.getElementById(
-      "switchText"
-    ).textContent =
-      "还没有账号？";
-
-    document.getElementById(
-      "switchButton"
-    ).textContent =
-      "注册账号";
-  }
-}
-
-
-/* =========================================================
-   登录 / 注册
-========================================================= */
-
-async function handleAuth() {
+async function register() {
 
   const nickname =
     document
-      .getElementById("authNickname")
+      .getElementById("nicknameInput")
       .value
       .trim();
 
-
   const password =
     document
-      .getElementById("authPassword")
+      .getElementById("passwordInput")
       .value;
 
 
   if (!nickname) {
 
-    showModal("请输入昵称。");
+    showLoginMessage(
+      "请输入昵称。"
+    );
 
     return;
   }
@@ -996,175 +946,208 @@ async function handleAuth() {
 
   if (nickname.length < 2) {
 
-    showModal("昵称至少需要 2 个字符。");
-
-    return;
-  }
-
-
-  if (!password) {
-
-    showModal("请输入密码。");
-
-    return;
-  }
-
-
-  if (password.length < 6) {
-
-    showModal("密码至少需要 6 个字符。");
-
-    return;
-  }
-
-
-  const email =
-    await nicknameToAuthEmail(
-      nickname
+    showLoginMessage(
+      "昵称至少需要 2 个字符。"
     );
 
+    return;
+  }
 
-  /* ======================
-     注册
-  ====================== */
 
-  if (authMode === "register") {
+  if (
+    !password ||
+    password.length < 6
+  ) {
 
-    try {
+    showLoginMessage(
+      "密码至少需要 6 个字符。"
+    );
 
-      const {
-        data: existing,
-        error: checkError
-      } = await db
+    return;
+  }
+
+
+  try {
+
+    const email =
+      await nicknameToAuthEmail(
+        nickname
+      );
+
+
+    /* 检查昵称 */
+
+    const {
+      data: existing,
+      error: checkError
+    } = await db
+      .from("profiles")
+      .select("id")
+      .eq(
+        "nickname",
+        nickname
+      )
+      .maybeSingle();
+
+
+    if (checkError) {
+
+      console.error(
+        checkError
+      );
+
+      showLoginMessage(
+        "检查昵称失败：" +
+        checkError.message
+      );
+
+      return;
+    }
+
+
+    if (existing) {
+
+      showLoginMessage(
+        "这个昵称已经被注册。"
+      );
+
+      return;
+    }
+
+
+    /* 注册 Auth */
+
+    const {
+      data,
+      error
+    } =
+      await db.auth.signUp({
+
+        email: email,
+
+        password: password
+
+      });
+
+
+    if (error) {
+
+      console.error(error);
+
+      showLoginMessage(
+        "注册失败：" +
+        error.message
+      );
+
+      return;
+    }
+
+
+    if (!data.user) {
+
+      showLoginMessage(
+        "注册失败，没有创建用户。"
+      );
+
+      return;
+    }
+
+
+    /* 创建 profile */
+
+    const {
+      error:
+        profileError
+    } =
+      await db
         .from("profiles")
-        .select("id")
-        .eq("nickname", nickname)
-        .maybeSingle();
+        .insert({
 
+          id: data.user.id,
 
-      if (checkError) {
-
-        console.error(checkError);
-
-        showModal(
-          "检查昵称失败：" +
-          checkError.message
-        );
-
-        return;
-      }
-
-
-      if (existing) {
-
-        showModal(
-          "这个昵称已经被注册。"
-        );
-
-        return;
-      }
-
-
-      const {
-        data,
-        error
-      } =
-        await db.auth.signUp({
-
-          email: email,
-
-          password: password
+          nickname: nickname
 
         });
 
 
-      if (error) {
+    if (profileError) {
 
-        console.error(error);
-
-        showModal(
-          "注册失败：" +
-          error.message
-        );
-
-        return;
-      }
-
-
-      if (!data.user) {
-
-        showModal(
-          "注册失败，没有创建用户。"
-        );
-
-        return;
-      }
-
-
-      const {
-        error: profileError
-      } =
-        await db
-          .from("profiles")
-          .insert({
-
-            id: data.user.id,
-
-            nickname: nickname
-
-          });
-
-
-      if (profileError) {
-
-        console.error(
-          profileError
-        );
-
-        showModal(
-          "账号创建成功，但昵称保存失败。\n\n" +
-          "请检查 Supabase 的 profiles INSERT RLS 权限。"
-        );
-
-        return;
-      }
-
-
-      currentUser =
-        data.user;
-
-
-      profileMap[
-        currentUser.id
-      ] = nickname;
-
-
-      document.getElementById(
-        "authPassword"
-      ).value = "";
-
-
-      showForum();
-
-
-    } catch (error) {
-
-      console.error(error);
-
-      showModal(
-        "注册过程中发生错误。"
+      console.error(
+        profileError
       );
+
+      showLoginMessage(
+        "账号创建成功，但昵称保存失败：" +
+        profileError.message
+      );
+
+      return;
     }
+
+
+    currentUser = data.user;
+
+    profileMap[
+      currentUser.id
+    ] = nickname;
+
+
+    updateAuthUI();
+
+    closeLoginModal();
+
+    await loadPosts();
+
+  } catch (error) {
+
+    console.error(error);
+
+    showLoginMessage(
+      "注册过程中发生错误：" +
+      error.message
+    );
+  }
+}
+
+
+/* =========================================================
+   登录
+========================================================= */
+
+async function login() {
+
+  const nickname =
+    document
+      .getElementById("nicknameInput")
+      .value
+      .trim();
+
+  const password =
+    document
+      .getElementById("passwordInput")
+      .value;
+
+
+  if (
+    !nickname ||
+    !password
+  ) {
+
+    showLoginMessage(
+      "请输入昵称和密码。"
+    );
 
     return;
   }
 
 
-  /* ======================
-     登录
-  ====================== */
-
   try {
+
+    const email =
+      await nicknameToAuthEmail(
+        nickname
+      );
+
 
     const {
       data,
@@ -1183,7 +1166,7 @@ async function handleAuth() {
 
       console.error(error);
 
-      showModal(
+      showLoginMessage(
         "登录失败：昵称或密码错误。"
       );
 
@@ -1191,74 +1174,32 @@ async function handleAuth() {
     }
 
 
-    currentUser =
-      data.user;
-
-
-    document.getElementById(
-      "authPassword"
-    ).value = "";
+    currentUser = data.user;
 
 
     await loadCurrentProfile();
 
 
-    showForum();
+    updateAuthUI();
 
+    closeLoginModal();
+
+    await loadPosts();
 
   } catch (error) {
 
     console.error(error);
 
-    showModal(
-      "登录过程中发生错误。"
+    showLoginMessage(
+      "登录失败：" +
+      error.message
     );
   }
 }
 
 
 /* =========================================================
-   显示论坛
-========================================================= */
-
-async function showForum() {
-
-  document.getElementById(
-    "authPage"
-  ).style.display = "none";
-
-
-  document.getElementById(
-    "forumPage"
-  ).style.display = "block";
-
-
-  updateProfileButton();
-
-
-  await loadPosts();
-}
-
-
-/* =========================================================
-   显示登录页
-========================================================= */
-
-function showAuth() {
-
-  document.getElementById(
-    "forumPage"
-  ).style.display = "none";
-
-
-  document.getElementById(
-    "authPage"
-  ).style.display = "flex";
-}
-
-
-/* =========================================================
-   当前用户资料
+   获取当前 profile
 ========================================================= */
 
 async function loadCurrentProfile() {
@@ -1271,21 +1212,25 @@ async function loadCurrentProfile() {
   const {
     data,
     error
-  } = await db
-    .from("profiles")
-    .select(
-      "id,nickname"
-    )
-    .eq(
-      "id",
-      currentUser.id
-    )
-    .maybeSingle();
+  } =
+    await db
+      .from("profiles")
+      .select(
+        "id,nickname"
+      )
+      .eq(
+        "id",
+        currentUser.id
+      )
+      .maybeSingle();
 
 
   if (error) {
 
-    console.error(error);
+    console.error(
+      "加载用户资料失败：",
+      error
+    );
 
     return;
   }
@@ -1293,91 +1238,81 @@ async function loadCurrentProfile() {
 
   if (data) {
 
-    profileMap[data.id] =
-      data.nickname;
+    profileMap[
+      data.id
+    ] = data.nickname;
   }
 }
 
 
 /* =========================================================
-   更新右上角头像
+   顶部登录状态
 ========================================================= */
 
-function updateProfileButton() {
+function updateAuthUI() {
+
+  const area =
+    document.getElementById(
+      "authArea"
+    );
+
+
+  if (!currentUser) {
+
+    area.innerHTML = `
+      <button
+        class="login-button"
+        onclick="openLoginModal()"
+      >
+        登录 / 注册
+      </button>
+    `;
+
+    return;
+  }
+
 
   const nickname =
-    currentUser
-      ? (
-          profileMap[
-            currentUser.id
-          ] || "?"
-        )
-      : "?";
+    profileMap[
+      currentUser.id
+    ] || "用户";
+
+
+  area.innerHTML = `
+    <button
+      class="avatar-button"
+      onclick="toggleUserMenu()"
+      title="${escapeHTML(nickname)}"
+    >
+      ${escapeHTML(
+        avatarLetter(nickname)
+      )}
+    </button>
+  `;
 
 
   document.getElementById(
-    "profileAvatar"
-  ).textContent =
-    avatarLetter(nickname);
+    "menuNickname"
+  ).textContent = nickname;
 
 
   document.getElementById(
-    "profileMenuName"
+    "menuEmail"
   ).textContent =
-    nickname;
-
-
-  document.getElementById(
-    "profileMenuEmail"
-  ).textContent =
-    currentUser
-      ? currentUser.email
-      : "";
+    "已登录";
 }
 
 
 /* =========================================================
-   打开 / 关闭个人菜单
+   用户菜单
 ========================================================= */
 
-function toggleProfileMenu() {
+function toggleUserMenu() {
 
   document
-    .getElementById(
-      "profileMenu"
-    )
+    .getElementById("userMenu")
     .classList.toggle("show");
 }
-
-
-/* =========================================================
-   点击其他位置关闭个人菜单
-========================================================= */
-
-document.addEventListener(
-  "click",
-  function(event) {
-
-    const wrapper =
-      document.querySelector(
-        ".profile-wrapper"
-      );
-
-
-    if (
-      wrapper &&
-      !wrapper.contains(event.target)
-    ) {
-
-      document
-        .getElementById(
-          "profileMenu"
-        )
-        .classList.remove("show");
-    }
-
-  }
-);
 
 
 /* =========================================================
@@ -1388,15 +1323,12 @@ async function logout() {
 
   const {
     error
-  } =
-    await db.auth.signOut();
+  } = await db.auth.signOut();
 
 
   if (error) {
 
-    console.error(error);
-
-    showModal(
+    alert(
       "退出登录失败：" +
       error.message
     );
@@ -1409,30 +1341,27 @@ async function logout() {
 
   profileMap = {};
 
-  likedPostIds =
-    new Set();
-
 
   document
-    .getElementById(
-      "profileMenu"
-    )
+    .getElementById("userMenu")
     .classList.remove("show");
 
 
-  showAuth();
+  updateAuthUI();
+
+  await loadPosts();
 }
 
 
 /* =========================================================
-   获取帖子用户昵称
+   获取用户昵称
 ========================================================= */
 
 async function loadProfiles(
   userIds
 ) {
 
-  const ids =
+  const uniqueIds =
     [
       ...new Set(
         userIds.filter(Boolean)
@@ -1440,7 +1369,10 @@ async function loadProfiles(
     ];
 
 
-  if (ids.length === 0) {
+  if (
+    uniqueIds.length === 0
+  ) {
+
     return;
   }
 
@@ -1456,14 +1388,14 @@ async function loadProfiles(
       )
       .in(
         "id",
-        ids
+        uniqueIds
       );
 
 
   if (error) {
 
     console.error(
-      "加载用户资料失败：",
+      "加载昵称失败：",
       error
     );
 
@@ -1472,78 +1404,12 @@ async function loadProfiles(
 
 
   for (
-    const profile
-    of data || []
+    const profile of data || []
   ) {
 
     profileMap[
       profile.id
-    ] =
-      profile.nickname;
-  }
-}
-
-
-/* =========================================================
-   获取当前用户点赞
-========================================================= */
-
-async function loadMyLikes(
-  postIds
-) {
-
-  likedPostIds =
-    new Set();
-
-
-  if (!currentUser) {
-    return;
-  }
-
-
-  if (!postIds.length) {
-    return;
-  }
-
-
-  const {
-    data,
-    error
-  } =
-    await db
-      .from("likes")
-      .select(
-        "post_id"
-      )
-      .eq(
-        "user_id",
-        currentUser.id
-      )
-      .in(
-        "post_id",
-        postIds
-      );
-
-
-  if (error) {
-
-    console.error(
-      "加载点赞失败：",
-      error
-    );
-
-    return;
-  }
-
-
-  for (
-    const like
-    of data || []
-  ) {
-
-    likedPostIds.add(
-      like.post_id
-    );
+    ] = profile.nickname;
   }
 }
 
@@ -1560,15 +1426,16 @@ async function loadPosts() {
     );
 
 
-  container.innerHTML =
-    `
-      <div class="loading">
-        正在加载帖子...
-      </div>
-    `;
+  container.innerHTML = `
+    <div class="loading">
+      正在加载帖子...
+    </div>
+  `;
 
 
   try {
+
+    /* 获取帖子 */
 
     const {
       data: posts,
@@ -1593,54 +1460,51 @@ async function loadPosts() {
         postsError
       );
 
+      container.innerHTML = `
+        <div class="empty">
+          帖子加载失败：
+          ${escapeHTML(
+            postsError.message
+          )}
+        </div>
+      `;
 
-      container.innerHTML =
-        `
-          <div class="empty">
-            帖子加载失败，请检查 Supabase 设置。
-          </div>
-        `;
+      return;
+    }
+
+
+    if (
+      !posts ||
+      posts.length === 0
+    ) {
+
+      container.innerHTML = `
+        <div class="empty">
+          还没有帖子，来发布第一条吧 🌱
+        </div>
+      `;
 
       return;
     }
 
 
-    if (!posts || posts.length === 0) {
+    /* 获取昵称 */
 
-      container.innerHTML =
-        `
-          <div class="empty">
-            还没有帖子，来发布第一条吧 🌱
-          </div>
-        `;
+    await loadProfiles(
+      posts.map(
+        post =>
+          post.author_id
+      )
+    );
 
-      return;
-    }
 
+    /* 获取评论 */
 
     const postIds =
       posts.map(
         post => post.id
       );
 
-
-    /* 用户 */
-
-    await loadProfiles(
-      posts.map(
-        post => post.author_id
-      )
-    );
-
-
-    /* 点赞 */
-
-    await loadMyLikes(
-      postIds
-    );
-
-
-    /* 评论 */
 
     const {
       data: comments,
@@ -1672,26 +1536,56 @@ async function loadPosts() {
     }
 
 
-    const allComments =
-      comments || [];
-
+    /* 获取评论昵称 */
 
     await loadProfiles(
-      allComments.map(
+      (comments || []).map(
         comment =>
           comment.author_id
       )
     );
 
 
-    /* 评论分类 */
+    /* 获取点赞 */
+
+    const {
+      data: likes,
+      error: likesError
+    } =
+      await db
+        .from("likes")
+        .select(
+          "id,post_id,user_id"
+        )
+        .in(
+          "post_id",
+          postIds
+        );
+
+
+    if (likesError) {
+
+      console.error(
+        "点赞加载失败：",
+        likesError
+      );
+    }
+
+
+    const commentList =
+      comments || [];
+
+    const likeList =
+      likes || [];
+
+
+    /* 按帖子分类评论 */
 
     const commentsByPost = {};
 
 
     for (
-      const comment
-      of allComments
+      const comment of commentList
     ) {
 
       if (
@@ -1712,67 +1606,38 @@ async function loadPosts() {
     }
 
 
-    /* ======================
-       获取点赞数量
-    ====================== */
+    /* 按帖子统计点赞 */
 
-    const {
-      data: likes,
-      error: likesError
-    } =
-      await db
-        .from("likes")
-        .select(
-          "post_id"
-        )
-        .in(
-          "post_id",
-          postIds
-        );
-
-
-    if (likesError) {
-
-      console.error(
-        "点赞数量加载失败：",
-        likesError
-      );
-    }
-
-
-    const likeCounts = {};
+    const likesByPost = {};
 
 
     for (
-      const like
-      of likes || []
+      const like of likeList
     ) {
 
       if (
-        !likeCounts[
+        !likesByPost[
           like.post_id
         ]
       ) {
 
-        likeCounts[
+        likesByPost[
           like.post_id
-        ] = 0;
+        ] = [];
       }
 
 
-      likeCounts[
+      likesByPost[
         like.post_id
-      ]++;
+      ].push(like);
     }
 
 
-    /* ======================
-       生成页面
-    ====================== */
+    /* 生成 HTML */
 
     container.innerHTML =
-      posts
-        .map(post => {
+      posts.map(
+        post => {
 
           const nickname =
             profileMap[
@@ -1787,103 +1652,104 @@ async function loadPosts() {
             ] || [];
 
 
+          const postLikes =
+            likesByPost[
+              post.id
+            ] || [];
+
+
           const likeCount =
-            likeCounts[
-              post.id
-            ] || 0;
+            postLikes.length;
 
 
-          const isLiked =
-            likedPostIds.has(
-              post.id
-            );
+          const hasLiked =
+            currentUser
+              ? postLikes.some(
+                  like =>
+                    like.user_id ===
+                    currentUser.id
+                )
+              : false;
 
 
-          let commentsHTML =
-            "";
+          let commentsHTML = "";
 
 
           if (
             postComments.length === 0
           ) {
 
-            commentsHTML =
-              `
-                <div class="time">
-                  暂无评论
-                </div>
-              `;
+            commentsHTML = `
+              <div class="time">
+                暂无评论
+              </div>
+            `;
 
           } else {
 
             commentsHTML =
               postComments
-                .map(comment => {
+                .map(
+                  comment => {
 
-                  const commentNickname =
-                    profileMap[
-                      comment.author_id
-                    ] ||
-                    "未知用户";
+                    const commentNickname =
+                      profileMap[
+                        comment.author_id
+                      ] ||
+                      "未知用户";
 
 
-                  return `
-                    <div class="comment">
+                    return `
+                      <div class="comment">
 
-                      <div class="comment-header">
+                        <div class="comment-header">
 
-                        <div class="avatar">
-                          ${escapeHTML(
-                            avatarLetter(
-                              commentNickname
-                            )
-                          )}
-                        </div>
-
-                        <div>
-
-                          <div class="author">
+                          <div class="avatar">
                             ${escapeHTML(
-                              commentNickname
-                            )}
-                          </div>
-
-                          <div class="time">
-                            ${escapeHTML(
-                              formatTime(
-                                comment.created_at
+                              avatarLetter(
+                                commentNickname
                               )
                             )}
                           </div>
 
+                          <div>
+
+                            <div class="author">
+                              ${escapeHTML(
+                                commentNickname
+                              )}
+                            </div>
+
+                            <div class="time">
+                              ${escapeHTML(
+                                formatTime(
+                                  comment.created_at
+                                )
+                              )}
+                            </div>
+
+                          </div>
+
+                        </div>
+
+                        <div class="comment-content">
+                          ${escapeHTML(
+                            comment.content
+                          )}
                         </div>
 
                       </div>
-
-                      <div class="comment-content">
-                        ${escapeHTML(
-                          comment.content
-                        )}
-                      </div>
-
-                    </div>
-                  `;
-
-                })
+                    `;
+                  }
+                )
                 .join("");
           }
 
 
           return `
-            <article
-              class="post"
-            >
+            <article class="post">
 
-              <!-- 用户 -->
-
-              <div
-                class="post-header"
-              >
+              <div class="post-header">
 
                 <div class="avatar">
                   ${escapeHTML(
@@ -1914,99 +1780,95 @@ async function loadPosts() {
               </div>
 
 
-              <!-- 标题 -->
-
-              <h2
-                class="post-title"
-              >
+              <h2 class="post-title">
                 ${escapeHTML(
                   post.title
                 )}
               </h2>
 
 
-              <!-- 内容 -->
-
-              <div
-                class="post-content"
-              >
+              <div class="post-content">
                 ${escapeHTML(
                   post.content
                 )}
               </div>
 
 
-              <!-- 点赞 -->
-
-              <div
-                class="post-actions"
-              >
+              <div class="post-actions">
 
                 <button
                   class="like-button ${
-                    isLiked
+                    hasLiked
                       ? "liked"
                       : ""
                   }"
-                  onclick="toggleLike('${post.id}')"
+                  onclick="toggleLike(${post.id})"
                 >
-
                   ${
-                    isLiked
-                      ? "❤️"
+                    hasLiked
+                      ? "♥"
                       : "♡"
                   }
-
-                  <span class="like-count">
-                    ${likeCount}
-                  </span>
-
+                  ${likeCount}
                 </button>
 
               </div>
 
 
-              <!-- 评论 -->
+              <div class="comments">
 
-              <div
-                class="comments"
-              >
+                ${
+                  currentUser
 
-                <div
-                  class="comment-input-row"
-                >
+                    ? `
 
-                  <input
-                    id="comment-${post.id}"
-                    type="text"
-                    maxlength="5000"
-                    placeholder="${
-                      currentUser
-                        ? "写下你的评论..."
-                        : "登录后可以发表评论"
-                    }"
-                    ${
-                      currentUser
-                        ? ""
-                        : "disabled"
-                    }
-                  >
+                      <div class="comment-input-row">
 
-                  <button
-                    onclick="${
-                      currentUser
-                        ? `createComment('${post.id}')`
-                        : "showAuthMessage()"
-                    }"
-                  >
-                    ${
-                      currentUser
-                        ? "发送评论"
-                        : "登录评论"
-                    }
-                  </button>
+                        <input
+                          id="comment-input-${post.id}"
+                          type="text"
+                          maxlength="5000"
+                          placeholder="写下你的评论..."
+                          onkeydown="
+                            if(event.key === 'Enter'){
+                              event.preventDefault();
+                              createComment(${post.id});
+                            }
+                          "
+                        >
 
-                </div>
+                        <button
+                          class="primary-button comment-send"
+                          onclick="createComment(${post.id})"
+                        >
+                          发送评论
+                        </button>
+
+                      </div>
+
+                    `
+
+                    : `
+
+                      <div class="comment-input-row">
+
+                        <input
+                          type="text"
+                          placeholder="登录后可以发表评论"
+                          disabled
+                        >
+
+                        <button
+                          class="secondary-button comment-send"
+                          onclick="openLoginModal()"
+                        >
+                          登录评论
+                        </button>
+
+                      </div>
+
+                    `
+                }
 
 
                 ${commentsHTML}
@@ -2015,35 +1877,26 @@ async function loadPosts() {
 
             </article>
           `;
-
-        })
-        .join("");
+        }
+      ).join("");
 
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      "加载页面失败：",
+      error
+    );
 
-
-    container.innerHTML =
-      `
-        <div class="empty">
-          加载失败，请检查网络和 Supabase 配置。
-        </div>
-      `;
+    container.innerHTML = `
+      <div class="empty">
+        页面加载失败：
+        ${escapeHTML(
+          error.message
+        )}
+      </div>
+    `;
   }
-}
-
-
-/* =========================================================
-   未登录提示
-========================================================= */
-
-function showAuthMessage() {
-
-  showModal(
-    "请先登录后再发表评论。"
-  );
 }
 
 
@@ -2055,9 +1908,7 @@ async function createPost() {
 
   if (!currentUser) {
 
-    showModal(
-      "请先登录。"
-    );
+    openLoginModal();
 
     return;
   }
@@ -2083,7 +1934,7 @@ async function createPost() {
 
   if (!title) {
 
-    showModal(
+    alert(
       "请输入帖子标题。"
     );
 
@@ -2093,7 +1944,7 @@ async function createPost() {
 
   if (!content) {
 
-    showModal(
+    alert(
       "请输入帖子正文。"
     );
 
@@ -2122,7 +1973,7 @@ async function createPost() {
 
     console.error(error);
 
-    showModal(
+    alert(
       "发布失败：" +
       error.message
     );
@@ -2146,33 +1997,53 @@ async function createPost() {
 
 
 /* =========================================================
-   发布评论
+   ⭐ 发布评论
 ========================================================= */
 
 async function createComment(
   postId
 ) {
 
+  console.log(
+    "createComment 被调用，postId =",
+    postId
+  );
+
+
+  /* ① 检查登录 */
+
   if (!currentUser) {
 
-    showModal(
-      "请先登录。"
-    );
+    openLoginModal();
 
     return;
   }
 
 
+  /* ② 找到评论输入框 */
+
   const input =
     document.getElementById(
-      `comment-${postId}`
+      `comment-input-${postId}`
     );
 
 
   if (!input) {
+
+    alert(
+      "找不到评论输入框，请刷新网页后重试。"
+    );
+
+    console.error(
+      "找不到 input:",
+      `comment-input-${postId}`
+    );
+
     return;
   }
 
+
+  /* ③ 获取内容 */
 
   const content =
     input.value.trim();
@@ -2180,59 +2051,109 @@ async function createComment(
 
   if (!content) {
 
-    showModal(
+    alert(
       "请输入评论内容。"
     );
 
+    input.focus();
+
     return;
   }
 
 
-  const {
-    error
-  } =
-    await db
-      .from("comments")
-      .insert({
+  /* ④ 暂时禁用按钮 */
 
-        post_id:
-          postId,
-
-        content:
-          content,
-
-        author_id:
-          currentUser.id
-
-      });
+  const button =
+    input
+      .parentElement
+      .querySelector(
+        "button"
+      );
 
 
-  if (error) {
+  if (button) {
+
+    button.disabled = true;
+
+    button.textContent =
+      "发送中...";
+  }
+
+
+  try {
+
+    /* ⑤ 写入 comments */
+
+    const {
+      error
+    } =
+      await db
+        .from("comments")
+        .insert({
+
+          post_id: postId,
+
+          content: content,
+
+          author_id:
+            currentUser.id
+
+        });
+
+
+    /* ⑥ 检查数据库错误 */
+
+    if (error) {
+
+      console.error(
+        "评论写入失败：",
+        error
+      );
+
+      alert(
+        "评论发送失败：\n" +
+        error.message
+      );
+
+      return;
+    }
+
+
+    /* ⑦ 成功 */
+
+    input.value = "";
+
+
+    await loadPosts();
+
+
+  } catch (error) {
 
     console.error(
-      "评论发布失败：",
+      "评论发生异常：",
       error
     );
 
-
-    showModal(
-      "评论发布失败：\n\n" +
+    alert(
+      "评论发送失败：\n" +
       error.message
     );
 
-    return;
+  } finally {
+
+    if (button) {
+
+      button.disabled = false;
+
+      button.textContent =
+        "发送评论";
+    }
   }
-
-
-  input.value = "";
-
-
-  await loadPosts();
 }
 
 
 /* =========================================================
-   点赞 / 取消点赞
+   ⭐ 点赞 / 取消点赞
 ========================================================= */
 
 async function toggleLike(
@@ -2241,28 +2162,23 @@ async function toggleLike(
 
   if (!currentUser) {
 
-    showModal(
-      "请先登录后点赞。"
-    );
+    openLoginModal();
 
     return;
   }
 
 
-  /* 已点赞 → 取消 */
+  try {
 
-  if (
-    likedPostIds.has(
-      postId
-    )
-  ) {
+    /* 检查是否已经点赞 */
 
     const {
-      error
+      data: existing,
+      error: checkError
     } =
       await db
         .from("likes")
-        .delete()
+        .select("id")
         .eq(
           "post_id",
           postId
@@ -2270,67 +2186,100 @@ async function toggleLike(
         .eq(
           "user_id",
           currentUser.id
+        )
+        .maybeSingle();
+
+
+    if (checkError) {
+
+      console.error(
+        checkError
+      );
+
+      alert(
+        "检查点赞失败：" +
+        checkError.message
+      );
+
+      return;
+    }
+
+
+    /* 已经点赞 → 取消 */
+
+    if (existing) {
+
+      const {
+        error
+      } =
+        await db
+          .from("likes")
+          .delete()
+          .eq(
+            "id",
+            existing.id
+          );
+
+
+      if (error) {
+
+        console.error(error);
+
+        alert(
+          "取消点赞失败：" +
+          error.message
         );
 
+        return;
+      }
 
-    if (error) {
 
-      console.error(error);
+    } else {
 
-      showModal(
-        "取消点赞失败：" +
-        error.message
-      );
+      /* 没有点赞 → 点赞 */
 
-      return;
+      const {
+        error
+      } =
+        await db
+          .from("likes")
+          .insert({
+
+            post_id: postId,
+
+            user_id:
+              currentUser.id
+
+          });
+
+
+      if (error) {
+
+        console.error(error);
+
+        alert(
+          "点赞失败：" +
+          error.message
+        );
+
+        return;
+      }
     }
 
 
-    likedPostIds.delete(
-      postId
+    await loadPosts();
+
+  } catch (error) {
+
+    console.error(
+      error
     );
 
-
-  } else {
-
-    /* 没点赞 → 点赞 */
-
-    const {
-      error
-    } =
-      await db
-        .from("likes")
-        .insert({
-
-          post_id:
-            postId,
-
-          user_id:
-            currentUser.id
-
-        });
-
-
-    if (error) {
-
-      console.error(error);
-
-      showModal(
-        "点赞失败：" +
-        error.message
-      );
-
-      return;
-    }
-
-
-    likedPostIds.add(
-      postId
+    alert(
+      "点赞操作失败：" +
+      error.message
     );
   }
-
-
-  await loadPosts();
 }
 
 
@@ -2340,55 +2289,112 @@ async function toggleLike(
 
 async function init() {
 
-  const {
-    data
-  } =
-    await db.auth.getSession();
+  try {
+
+    const {
+      data
+    } =
+      await db.auth.getSession();
 
 
-  currentUser =
-    data.session
-      ? data.session.user
-      : null;
+    currentUser =
+      data.session
+        ? data.session.user
+        : null;
 
 
-  if (currentUser) {
+    if (currentUser) {
 
-    await loadCurrentProfile();
-
-    showForum();
-
-  } else {
-
-    showAuth();
-  }
+      await loadCurrentProfile();
+    }
 
 
-  /* 监听登录状态 */
+    updateAuthUI();
 
-  db.auth.onAuthStateChange(
-    async (
-      _event,
-      session
-    ) => {
+    await loadPosts();
 
-      currentUser =
+
+    /* 监听登录状态 */
+
+    db.auth.onAuthStateChange(
+      async (
+        _event,
         session
-          ? session.user
-          : null;
+      ) => {
+
+        currentUser =
+          session
+            ? session.user
+            : null;
 
 
-      if (currentUser) {
+        if (currentUser) {
 
-        await loadCurrentProfile();
+          await loadCurrentProfile();
+        }
 
-        updateProfileButton();
+
+        updateAuthUI();
+
+        await loadPosts();
 
       }
+    );
 
-    }
-  );
+
+  } catch (error) {
+
+    console.error(
+      "初始化失败：",
+      error
+    );
+
+    document.getElementById(
+      "posts"
+    ).innerHTML = `
+      <div class="empty">
+        初始化失败：
+        ${escapeHTML(
+          error.message
+        )}
+      </div>
+    `;
+  }
 }
+
+
+/* =========================================================
+   点击页面其他地方时关闭用户菜单
+========================================================= */
+
+document.addEventListener(
+  "click",
+  function(event) {
+
+    const menu =
+      document.getElementById(
+        "userMenu"
+      );
+
+    const authArea =
+      document.getElementById(
+        "authArea"
+      );
+
+
+    if (
+      menu.classList.contains("show") &&
+      !menu.contains(event.target) &&
+      !authArea.contains(event.target)
+    ) {
+
+      menu.classList.remove(
+        "show"
+      );
+    }
+
+  }
+);
 
 
 /* 启动 */
