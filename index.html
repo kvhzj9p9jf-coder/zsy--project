@@ -1,804 +1,1675 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>我与OC的日常</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>简易论坛</title>
+
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     * {
-      margin: 0;
-      padding: 0;
       box-sizing: border-box;
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
     }
+
     body {
-      background: #0b0e16;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 12px;
+      margin: 0;
+      background: #ffffff;
+      color: #26352d;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "PingFang SC",
+        "Hiragino Sans GB",
+        "Microsoft YaHei",
+        sans-serif;
     }
-    /* 手机壳 */
-    .phone {
-      max-width: 420px;
-      width: 100%;
-      background: #131824;
-      border-radius: 42px;
-      padding: 16px 12px 20px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 0 2px #2a314a;
-      position: relative;
-      min-height: 780px;
-      display: flex;
-      flex-direction: column;
+
+    button,
+    input,
+    textarea {
+      font: inherit;
     }
-    .status-bar {
-      display: flex;
-      justify-content: space-between;
-      color: #aab3d6;
-      font-size: 0.75rem;
-      padding: 0 6px 10px 6px;
-      font-weight: 500;
-    }
-    .screen {
-      flex: 1;
-      background: #141b2b;
-      border-radius: 32px;
-      padding: 14px 12px 12px;
-      min-height: 680px;
-      display: flex;
-      flex-direction: column;
-      border: 1px solid #28304a;
-      box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
-    }
-    /* 顶部导航 */
-    .nav {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 14px;
-      border-bottom: 1px solid #28304a;
-      padding-bottom: 10px;
-      flex-wrap: wrap;
-    }
-    .nav button {
-      background: transparent;
-      border: none;
-      color: #8d99c0;
-      padding: 6px 16px;
-      border-radius: 30px;
-      font-size: 0.85rem;
-      font-weight: 500;
+
+    button {
       cursor: pointer;
-      transition: 0.15s;
     }
-    .nav button.active {
-      background: #3d4b74;
-      color: #f0f5ff;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
-    .nav button:hover { background: #2d3657; color: #d6e0ff; }
 
-    /* 页面容器 */
     .page {
-      display: none;
-      flex-direction: column;
-      flex: 1;
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px 12px 50px;
     }
-    .page.active { display: flex; }
 
-    /* 群聊/私聊 消息区 */
-    .chat-box {
-      flex: 1;
-      background: #0f1629;
-      border-radius: 24px;
-      padding: 12px 10px;
-      overflow-y: auto;
-      max-height: 480px;
-      border: 1px solid #212b44;
+    /* =========================
+       顶部
+    ========================= */
+
+    .topbar {
+      background: #ffffff;
+      border: 1px solid #dcefe3;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 3px 15px rgba(70, 130, 90, 0.06);
+    }
+
+    .site-title {
+      margin: 0 0 15px;
+      font-size: 23px;
+      color: #26734a;
+    }
+
+    .auth-area {
       display: flex;
-      flex-direction: column;
+      flex-wrap: wrap;
       gap: 8px;
-      margin-bottom: 10px;
     }
-    .chat-box::-webkit-scrollbar { width: 4px; }
-    .chat-box::-webkit-scrollbar-thumb { background: #3d4a6b; border-radius: 10px; }
 
-    .msg {
-      background: #1c2440;
-      border-radius: 18px 18px 18px 4px;
-      padding: 10px 14px;
-      border-left: 3px solid #6a7fb5;
-      max-width: 90%;
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid #d8e9df;
+      border-radius: 10px;
+      padding: 11px 12px;
+      outline: none;
+      background: #ffffff;
+      color: #26352d;
     }
-    .msg.self {
-      align-self: flex-end;
-      background: #2a3559;
-      border-left-color: #f5c542;
-      border-radius: 18px 18px 4px 18px;
-    }
-    .msg .sender { font-weight: 600; color: #d3defa; font-size: 0.8rem; }
-    .msg .content { color: #f0f5ff; margin-top: 4px; word-break: break-word; font-size: 0.9rem; }
-    .msg .time { font-size: 0.6rem; color: #7a88b0; text-align: right; margin-top: 4px; }
 
-    .input-row {
-      display: flex;
-      gap: 8px;
-      background: #0f1629;
-      padding: 4px 4px 4px 14px;
-      border-radius: 40px;
-      border: 1px solid #2d3657;
+    input:focus,
+    textarea:focus {
+      border-color: #69b987;
+      box-shadow: 0 0 0 3px rgba(105, 185, 135, 0.12);
     }
-    .input-row select {
-      background: #1a233b;
-      border: none;
-      color: #dae2ff;
-      padding: 6px 10px;
-      border-radius: 30px;
-      font-size: 0.75rem;
-      outline: none;
-      min-width: 80px;
+
+    .auth-input {
+      flex: 1 1 180px;
+      min-width: 0;
     }
-    .input-row input {
-      flex:1;
-      background: transparent;
-      border: none;
-      padding: 8px 4px;
-      color: #f0f5ff;
-      outline: none;
-      font-size: 0.9rem;
-    }
-    .input-row input::placeholder { color: #5a6890; }
-    .input-row button {
-      background: #4f6190;
-      border: none;
-      border-radius: 40px;
-      padding: 6px 18px;
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 16px;
+      background: #63b783;
       color: white;
       font-weight: 600;
-      cursor: pointer;
-      transition: 0.15s;
     }
-    .input-row button:hover { background: #6f85ba; }
 
-    /* 私聊特殊 */
-    .private-target {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      margin-bottom: 6px;
+    button:hover {
+      background: #4fa66f;
     }
-    .private-target select {
-      background: #1a233b;
-      border: 1px solid #2d3657;
-      color: #dae2ff;
-      padding: 4px 12px;
-      border-radius: 30px;
-      font-size: 0.8rem;
-      outline: none;
-    }
-    .private-target label { color: #9aa8d0; font-size: 0.8rem; }
 
-    /* 朋友圈 */
-    .moment-list {
-      flex: 1;
-      background: #0f1629;
-      border-radius: 24px;
-      padding: 12px 10px;
-      overflow-y: auto;
-      max-height: 480px;
-      border: 1px solid #212b44;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    button.secondary {
+      background: #edf8f1;
+      color: #31794e;
     }
-    .moment-list::-webkit-scrollbar { width: 4px; }
-    .moment-list::-webkit-scrollbar-thumb { background: #3d4a6b; border-radius: 10px; }
 
-    .moment-item {
-      background: #1c2440;
-      border-radius: 20px;
-      padding: 12px 16px;
-      border-left: 4px solid #b3a0d6;
+    button.secondary:hover {
+      background: #dff1e5;
     }
-    .moment-item .m-name { font-weight: 600; color: #d1dbfa; font-size: 0.9rem; }
-    .moment-item .m-text { color: #eef3ff; margin-top: 6px; font-size: 0.9rem; }
-    .moment-item .m-time { font-size: 0.6rem; color: #7a88b0; text-align: right; margin-top: 6px; }
-    .moment-actions {
+
+    button.danger {
+      background: #f2eeee;
+      color: #8a5555;
+    }
+
+    button.danger:hover {
+      background: #eadfdf;
+    }
+
+    .user-status {
+      margin-top: 10px;
+      color: #71857a;
+      font-size: 14px;
+    }
+
+    /* =========================
+       发帖
+    ========================= */
+
+    .create-post {
+      background: #ffffff;
+      border: 1px solid #dcefe3;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 3px 15px rgba(70, 130, 90, 0.06);
+    }
+
+    .section-title {
+      margin: 0 0 12px;
+      font-size: 18px;
+      color: #26734a;
+    }
+
+    .create-post textarea {
+      margin-top: 9px;
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    .create-actions {
       display: flex;
       justify-content: flex-end;
-      gap: 10px;
-      margin-top: 6px;
-    }
-    .moment-actions button {
-      background: #2d3657;
-      border: none;
-      color: #c8d2f0;
-      padding: 2px 14px;
-      border-radius: 30px;
-      font-size: 0.7rem;
-      cursor: pointer;
+      margin-top: 10px;
     }
 
-    /* 欢迎页 */
-    .welcome {
-      flex: 1;
+    /* =========================
+       帖子
+    ========================= */
+
+    .posts {
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      color: #b7c2e6;
-      gap: 16px;
-      text-align: center;
-      padding: 20px;
+      gap: 14px;
     }
-    .welcome h2 { font-size: 1.8rem; font-weight: 400; letter-spacing: 2px; }
-    .welcome p { color: #7f8bb0; font-size: 0.9rem; max-width: 260px; }
-    .welcome button {
-      background: #4f6190;
-      border: none;
-      color: white;
-      padding: 12px 40px;
-      border-radius: 60px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-      transition: 0.15s;
-    }
-    .welcome button:hover { background: #6f85ba; transform: scale(1.02); }
 
-    /* 角色列表小标签 */
-    .char-tag {
+    .post {
+      background: #ffffff;
+      border: 1px solid #dcefe3;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 3px 15px rgba(70, 130, 90, 0.05);
+    }
+
+    .post-header,
+    .comment-header {
       display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 8px;
-    }
-    .char-tag span {
-      background: #1f2843;
-      padding: 2px 14px;
-      border-radius: 30px;
-      font-size: 0.7rem;
-      color: #bcc7ee;
-      border: 1px solid #2e385a;
-      cursor: pointer;
-      transition: 0.1s;
-    }
-    .char-tag span.active {
-      background: #3d4b74;
-      border-color: #f5c542;
-      color: white;
+      align-items: center;
+      gap: 9px;
     }
 
-    /* 模态框 */
-    .modal {
+    /* 固定绿色头像 */
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      min-width: 38px;
+      border-radius: 50%;
+      background: #63b783;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .comment .avatar {
+      width: 31px;
+      height: 31px;
+      min-width: 31px;
+      font-size: 14px;
+    }
+
+    .author {
+      font-weight: 700;
+      color: #31794e;
+    }
+
+    .time {
+      margin-top: 2px;
+      color: #8b9c92;
+      font-size: 12px;
+    }
+
+    .post-title {
+      margin: 14px 0 8px;
+      color: #26352d;
+      font-size: 20px;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .post-content {
+      color: #52645a;
+      font-size: 15px;
+      line-height: 1.75;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* =========================
+       评论
+    ========================= */
+
+    .comments {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid #edf4ef;
+    }
+
+    .comment-input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .comment-input-row input {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .comment {
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f4f1;
+    }
+
+    .comment:last-child {
+      border-bottom: 0;
+    }
+
+    .comment-content {
+      margin: 6px 0 0 40px;
+      color: #52645a;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* =========================
+       状态
+    ========================= */
+
+    .empty {
+      text-align: center;
+      padding: 35px 10px;
+      color: #8a9a91;
+      border: 1px dashed #d8e9df;
+      border-radius: 14px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 30px;
+      color: #759080;
+    }
+
+    /* =========================
+       弹窗
+    ========================= */
+
+    .modal-mask {
       display: none;
       position: fixed;
-      top:0;left:0;width:100%;height:100%;
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(6px);
+      inset: 0;
+      background: rgba(20, 40, 28, 0.25);
       align-items: center;
       justify-content: center;
+      padding: 20px;
       z-index: 999;
     }
-    .modal.open { display: flex; }
-    .modal-box {
-      background: #1f2843;
-      max-width: 380px;
-      width: 90%;
-      padding: 24px 20px 28px;
-      border-radius: 36px;
-      border: 1px solid #3f4a6e;
-      color: #e8efff;
-    }
-    .modal-box h2 { margin-bottom: 12px; font-weight: 500; font-size: 1.4rem; }
-    .modal-box label { display: block; font-size: 0.75rem; color: #a6b4db; margin-top: 12px; }
-    .modal-box input, .modal-box textarea {
-      width: 100%;
-      background: #111a2e;
-      border: 1px solid #3d4668;
-      border-radius: 24px;
-      padding: 10px 16px;
-      color: #f0f5ff;
-      font-size: 0.9rem;
-      margin-top: 4px;
-      outline: none;
-    }
-    .modal-box textarea { min-height: 60px; resize: vertical; }
-    .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; }
-    .modal-actions button { background: #3d4768; border: none; color: white; padding: 8px 22px; border-radius: 40px; cursor: pointer; }
-    .modal-actions .primary { background: #657bb0; }
-    .modal-actions .primary:hover { background: #7d96cf; }
 
-    @media (max-width: 460px) {
-      .phone { border-radius: 28px; padding: 10px; }
-      .screen { border-radius: 24px; padding: 10px; }
+    .modal {
+      width: 100%;
+      max-width: 350px;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 22px;
+      text-align: center;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal h3 {
+      margin: 0 0 8px;
+      color: #31794e;
+    }
+
+    .modal p {
+      color: #66776d;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .modal button {
+      margin-top: 8px;
+      min-width: 100px;
+    }
+
+    /* =========================
+       手机适配
+    ========================= */
+
+    @media (max-width: 600px) {
+
+      .page {
+        padding: 10px 9px 35px;
+      }
+
+      .topbar,
+      .create-post,
+      .post {
+        border-radius: 13px;
+        padding: 13px;
+      }
+
+      .auth-area {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .auth-input {
+        grid-column: span 2;
+      }
+
+      .auth-area button {
+        width: 100%;
+      }
+
+      .post-title {
+        font-size: 18px;
+      }
+
+      .comment-input-row {
+        flex-direction: column;
+      }
+
+      .comment-input-row button {
+        width: 100%;
+      }
     }
   </style>
 </head>
+
 <body>
-<div class="phone">
-  <div class="status-bar"><span>📶 我与OC</span><span>🔋 100%</span></div>
-  <div class="screen">
-    <!-- 导航 -->
-    <div class="nav">
-      <button class="active" data-page="welcome">🏠 日常</button>
-      <button data-page="group">💬 群聊</button>
-      <button data-page="private">🔒 私聊</button>
-      <button data-page="moment">📱 朋友圈</button>
+
+<div class="page">
+
+  <!-- =========================
+       顶部账号区域
+  ========================= -->
+
+  <div class="topbar">
+
+    <h1 class="site-title">🌿 简易论坛</h1>
+
+    <div class="auth-area">
+
+      <input
+        id="nickname"
+        class="auth-input"
+        type="text"
+        maxlength="30"
+        placeholder="昵称"
+        autocomplete="username"
+      >
+
+      <input
+        id="password"
+        class="auth-input"
+        type="password"
+        maxlength="72"
+        placeholder="密码"
+        autocomplete="current-password"
+      >
+
+      <button onclick="register()">注册</button>
+
+      <button onclick="login()">登录</button>
+
+      <button
+        class="danger"
+        onclick="logout()"
+      >
+        退出登录
+      </button>
+
     </div>
 
-    <!-- 欢迎页 -->
-    <div id="page-welcome" class="page active welcome">
-      <h2>☕ 我与OC的日常</h2>
-      <p>点击开始，进入我们的小世界。<br>角色们会按性格说话、发动态。</p>
-      <button id="startBtn">✨ 开始</button>
+    <div id="userStatus" class="user-status">
+      当前状态：未登录，仅可浏览
     </div>
 
-    <!-- 群聊 -->
-    <div id="page-group" class="page">
-      <div class="char-tag" id="groupCharTags"></div>
-      <div class="chat-box" id="groupChatBox"></div>
-      <div class="input-row">
-        <select id="groupSpeaker"><option value="">发言角色</option></select>
-        <input type="text" id="groupInput" placeholder="说点什么…" />
-        <button id="groupSendBtn">发送</button>
-      </div>
-    </div>
-
-    <!-- 私聊 -->
-    <div id="page-private" class="page">
-      <div class="private-target">
-        <label>与谁私聊：</label>
-        <select id="privateTarget"><option value="">选择角色</option></select>
-      </div>
-      <div class="chat-box" id="privateChatBox"></div>
-      <div class="input-row">
-        <select id="privateSpeaker"><option value="">发言角色</option></select>
-        <input type="text" id="privateInput" placeholder="私聊…" />
-        <button id="privateSendBtn">发送</button>
-      </div>
-    </div>
-
-    <!-- 朋友圈 -->
-    <div id="page-moment" class="page">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-        <span style="color:#b7c2e6; font-weight:500;">📱 动态</span>
-        <button id="publishMomentBtn" style="background:#3d4b74; border:none; color:white; padding:4px 16px; border-radius:30px; font-size:0.8rem; cursor:pointer;">+ 发布</button>
-      </div>
-      <div class="moment-list" id="momentList"></div>
-    </div>
   </div>
+
+
+  <!-- =========================
+       发帖区域
+  ========================= -->
+
+  <div class="create-post">
+
+    <h2 class="section-title">
+      发布新帖子
+    </h2>
+
+    <input
+      id="postTitle"
+      type="text"
+      maxlength="200"
+      placeholder="帖子标题"
+    >
+
+    <textarea
+      id="postContent"
+      maxlength="10000"
+      placeholder="写下你想分享的内容..."
+    ></textarea>
+
+    <div class="create-actions">
+
+      <button onclick="createPost()">
+        发布帖子
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       帖子列表
+  ========================= -->
+
+  <div id="posts" class="posts">
+
+    <div class="loading">
+      正在加载帖子...
+    </div>
+
+  </div>
+
 </div>
 
-<!-- 模态框：编辑角色 -->
-<div class="modal" id="charModal">
-  <div class="modal-box">
-    <h2 id="modalTitle">✨ 角色设定</h2>
-    <label>名称</label><input type="text" id="cName" placeholder="林汐" />
-    <label>性格 (影响发言风格)</label><input type="text" id="cPersonality" placeholder="温柔、毒舌、冷静…" />
-    <label>外貌</label><input type="text" id="cAppearance" placeholder="黑发碧眼" />
-    <label>身高</label><input type="text" id="cHeight" placeholder="165cm" />
-    <label>经历</label><textarea id="cBackstory" placeholder="曾经…"></textarea>
-    <div class="modal-actions"><button id="modalCancel">取消</button><button class="primary" id="modalSave">保存</button></div>
+
+<!-- =========================
+     登录提示弹窗
+========================= -->
+
+<div id="modalMask" class="modal-mask">
+
+  <div class="modal">
+
+    <h3>需要登录</h3>
+
+    <p id="modalText">
+      登录后才能进行此操作。
+    </p>
+
+    <button onclick="closeModal()">
+      知道了
+    </button>
+
   </div>
+
 </div>
+
 
 <script>
-  (function() {
-    // ---- 数据 ----
-    let chars = [];
-    let nextId = 1;
-    let chatLog = [];          // { sender, content, time, private?: bool, target?: string }
-    let moments = [];
-    let currentSpeakerId = null;
-    let privateTargetId = null;
-    let currentPage = 'welcome';
 
-    // DOM
-    const pages = {
-      welcome: document.getElementById('page-welcome'),
-      group: document.getElementById('page-group'),
-      private: document.getElementById('page-private'),
-      moment: document.getElementById('page-moment'),
-    };
-    const navBtns = document.querySelectorAll('.nav button');
-    const startBtn = document.getElementById('startBtn');
+/*
+============================================================
+                    ★★★ 重要 ★★★
 
-    // 群聊
-    const groupChatBox = document.getElementById('groupChatBox');
-    const groupSpeaker = document.getElementById('groupSpeaker');
-    const groupInput = document.getElementById('groupInput');
-    const groupSendBtn = document.getElementById('groupSendBtn');
-    const groupCharTags = document.getElementById('groupCharTags');
+          你只需要修改下面这两个地方！
 
-    // 私聊
-    const privateChatBox = document.getElementById('privateChatBox');
-    const privateTarget = document.getElementById('privateTarget');
-    const privateSpeaker = document.getElementById('privateSpeaker');
-    const privateInput = document.getElementById('privateInput');
-    const privateSendBtn = document.getElementById('privateSendBtn');
+============================================================
 
-    // 朋友圈
-    const momentList = document.getElementById('momentList');
-    const publishBtn = document.getElementById('publishMomentBtn');
+① SUPABASE_URL
+② SUPABASE_PUBLISHABLE_KEY
 
-    // modal
-    const modal = document.getElementById('charModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const cName = document.getElementById('cName');
-    const cPersonality = document.getElementById('cPersonality');
-    const cAppearance = document.getElementById('cAppearance');
-    const cHeight = document.getElementById('cHeight');
-    const cBackstory = document.getElementById('cBackstory');
-    const modalCancel = document.getElementById('modalCancel');
-    const modalSave = document.getElementById('modalSave');
-    let editingId = null;
+其他代码全部不要修改。
 
-    // ---- 工具 ----
-    function timeStr() {
-      const d = new Date();
-      return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+============================================================
+*/
+
+
+/* =========================================================
+   ① 你的 Supabase URL
+
+   把下面的“需要修改”替换成你自己的 Supabase URL。
+   ========================================================= */
+
+const SUPABASE_URL = "https://hgkiypwuftoebuzkfeyh.supabase.co";
+
+
+/* =========================================================
+   ② 你的 Supabase Publishable Key
+
+   把下面的“需要修改”替换成你自己的 Publishable Key。
+
+   ⚠️ 绝对不要填写 Secret Key。
+   ⚠️ 绝对不要填写 service_role Key。
+   ========================================================= */
+
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_MPiE7CxF5KB4sJJhD2_ZUg_wXMHpIJ9";
+
+
+/*
+============================================================
+                 ★★★ 配置结束 ★★★
+============================================================
+*/
+
+
+/* 初始化 Supabase */
+
+const { createClient } = supabase;
+
+const db = createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+
+/* 当前用户 */
+
+let currentUser = null;
+
+
+/* 用户昵称缓存 */
+
+let profileMap = {};
+
+
+/* =========================================================
+   工具函数
+========================================================= */
+
+function escapeHTML(value) {
+
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+function formatTime(time) {
+
+  if (!time) {
+    return "";
+  }
+
+  const date = new Date(time);
+
+  return date.toLocaleString("zh-CN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
+
+function avatarLetter(nickname) {
+
+  if (!nickname) {
+    return "?";
+  }
+
+  return nickname.trim().charAt(0).toUpperCase();
+}
+
+
+function showModal(message) {
+
+  document.getElementById("modalText").textContent = message;
+
+  document.getElementById("modalMask").style.display = "flex";
+}
+
+
+function closeModal() {
+
+  document.getElementById("modalMask").style.display = "none";
+}
+
+
+function requireLogin() {
+
+  showModal(
+    "请先登录账号，然后才能发帖或发表评论。"
+  );
+}
+
+
+/* =========================================================
+   将昵称转换成内部 Auth 邮箱
+
+   用户看到的仍然只是：
+
+   昵称 + 密码
+
+   用户不需要输入邮箱。
+========================================================= */
+
+async function nicknameToAuthEmail(nickname) {
+
+  const data = new TextEncoder().encode(
+    nickname.trim().toLowerCase()
+  );
+
+  const hashBuffer = await crypto.subtle.digest(
+    "SHA-256",
+    data
+  );
+
+  const hashArray =
+    Array.from(new Uint8Array(hashBuffer));
+
+  const hash =
+    hashArray
+      .map(
+        b => b.toString(16).padStart(2, "0")
+      )
+      .join("");
+
+  return `user-${hash}@forum.local`;
+}
+
+
+/* =========================================================
+   注册
+========================================================= */
+
+async function register() {
+
+  const nickname =
+    document
+      .getElementById("nickname")
+      .value
+      .trim();
+
+  const password =
+    document
+      .getElementById("password")
+      .value;
+
+
+  if (!nickname) {
+
+    showModal("请输入昵称。");
+
+    return;
+  }
+
+
+  if (nickname.length < 2) {
+
+    showModal("昵称至少需要 2 个字符。");
+
+    return;
+  }
+
+
+  if (!password || password.length < 6) {
+
+    showModal("密码至少需要 6 个字符。");
+
+    return;
+  }
+
+
+  try {
+
+    const email =
+      await nicknameToAuthEmail(nickname);
+
+
+    /* 检查昵称是否已经存在 */
+
+    const {
+      data: existingProfile,
+      error: profileCheckError
+    } = await db
+      .from("profiles")
+      .select("id")
+      .eq("nickname", nickname)
+      .maybeSingle();
+
+
+    if (profileCheckError) {
+
+      console.error(profileCheckError);
+
+      showModal(
+        "无法检查昵称，请检查 profiles 表和 RLS 设置。"
+      );
+
+      return;
     }
 
-    // 根据性格生成回复 (每次不同)
-    function generateReply(char, userMsg) {
-      if (!char) return '……';
-      const p = (char.personality || '普通').toLowerCase();
-      const templates = [];
-      if (p.includes('温柔') || p.includes('细腻') || p.includes('善解')) {
-        templates.push(`“${char.name}” 温柔地笑了笑：「${userMsg}… 我懂你，别担心。」`);
-        templates.push(`“${char.name}” 轻声说：「${userMsg}，一切都会好起来的。」`);
-        templates.push(`“${char.name}” 眼里带着暖意：「${userMsg}，你真善良。」`);
-      } else if (p.includes('毒舌') || p.includes('傲娇') || p.includes('讽刺')) {
-        templates.push(`“${char.name}” 冷哼一声：「${userMsg}？你认真的？」`);
-        templates.push(`“${char.name}” 翻了个白眼：「${userMsg}，无聊。」`);
-        templates.push(`“${char.name}” 抱着手臂：「${userMsg}… 哼，随你便。」`);
-      } else if (p.includes('活泼') || p.includes('热情') || p.includes('开朗')) {
-        templates.push(`“${char.name}” 开心地跳起来：「${userMsg}！太棒了！！」`);
-        templates.push(`“${char.name}” 眼睛发亮：「${userMsg}，我也超喜欢的！」`);
-        templates.push(`“${char.name}” 拍手笑道：「${userMsg}，哈哈，有趣！」`);
-      } else if (p.includes('冷静') || p.includes('理性')) {
-        templates.push(`“${char.name}” 推了推眼镜：「${userMsg}… 从数据上看，合理。」`);
-        templates.push(`“${char.name}” 沉思片刻：「${userMsg}，逻辑上说得通。」`);
-        templates.push(`“${char.name}” 平静地点头：「${userMsg}，嗯，我明白了。」`);
-      } else {
-        templates.push(`“${char.name}” 想了想：「${userMsg}… 原来如此。」`);
-        templates.push(`“${char.name}” 回应道：「${userMsg}，好的。」`);
-        templates.push(`“${char.name}” 微微一笑：「${userMsg}，有道理。」`);
-      }
-      // 随机选一条，并加入外貌/经历细节 (偶尔)
-      let reply = templates[Math.floor(Math.random() * templates.length)];
-      if (char.appearance && Math.random() > 0.7) {
-        reply += ` (${char.appearance.slice(0,10)}…)`;
-      }
-      return reply;
+
+    if (existingProfile) {
+
+      showModal(
+        "这个昵称已经被注册，请换一个昵称。"
+      );
+
+      return;
     }
 
-    // 生成朋友圈 (按性格)
-    function generateMoment(char) {
-      if (!char) return '今天天气不错。';
-      const p = (char.personality || '普通').toLowerCase();
-      const pool = [];
-      if (p.includes('温柔')) pool.push('窗外的花开得很安静。', '泡了杯茶，想起一些旧事。', '今天阳光很好，适合散步。');
-      if (p.includes('毒舌')) pool.push('有些人真是没救了。', '今天的咖啡酸得像柠檬。', '无语，世界真奇妙。');
-      if (p.includes('活泼')) pool.push('哇！！今天超开心！！', '遇到了超可爱的小猫！', '蹦蹦跳跳的一天！');
-      if (p.includes('冷静')) pool.push('观察到一个有趣的现象。', '理性分析，一切皆可解。', '数据不会说谎。');
-      if (pool.length === 0) pool.push('今天也是平凡的一天。', '嗯，记录一下。', '没什么特别的。');
-      return pool[Math.floor(Math.random() * pool.length)];
+
+    /* 创建 Auth 用户 */
+
+    const {
+      data,
+      error
+    } = await db.auth.signUp({
+
+      email: email,
+
+      password: password
+
+    });
+
+
+    if (error) {
+
+      console.error(error);
+
+      showModal(
+        "注册失败：" + error.message
+      );
+
+      return;
     }
 
-    // ---- 渲染 ----
-    function renderGroupChat() {
-      const msgs = chatLog.filter(m => !m.private);
-      if (msgs.length === 0) {
-        groupChatBox.innerHTML = `<div style="color:#6a789a;text-align:center;padding:30px 0;">💬 群聊空空</div>`;
-        return;
-      }
-      let html = '';
-      msgs.forEach(m => {
-        const isSelf = m.sender === '你';
-        html += `<div class="msg ${isSelf?'self':''}">
-          <div class="sender">${m.sender}</div>
-          <div class="content">${m.content}</div>
-          <div class="time">${m.time}</div>
+
+    if (!data.user) {
+
+      showModal(
+        "注册失败，没有创建用户。"
+      );
+
+      return;
+    }
+
+
+    /* 创建 profiles */
+
+    const {
+      error: insertProfileError
+    } = await db
+      .from("profiles")
+      .insert({
+
+        id: data.user.id,
+
+        nickname: nickname
+
+      });
+
+
+    if (insertProfileError) {
+
+      console.error(insertProfileError);
+
+      showModal(
+        "账号已经创建，但昵称保存失败，请检查 profiles 的 RLS。"
+      );
+
+      return;
+    }
+
+
+    currentUser = data.user;
+
+    profileMap[currentUser.id] = nickname;
+
+    updateUserStatus();
+
+    document.getElementById("password").value = "";
+
+    showModal(
+      "注册成功，现在可以发帖和评论了。"
+    );
+
+    await loadPosts();
+
+  } catch (error) {
+
+    console.error(error);
+
+    showModal(
+      "注册过程中发生错误。"
+    );
+
+  }
+}
+
+
+/* =========================================================
+   登录
+========================================================= */
+
+async function login() {
+
+  const nickname =
+    document
+      .getElementById("nickname")
+      .value
+      .trim();
+
+  const password =
+    document
+      .getElementById("password")
+      .value;
+
+
+  if (!nickname || !password) {
+
+    showModal(
+      "请输入昵称和密码。"
+    );
+
+    return;
+  }
+
+
+  try {
+
+    const email =
+      await nicknameToAuthEmail(nickname);
+
+
+    const {
+      data,
+      error
+    } = await db.auth.signInWithPassword({
+
+      email: email,
+
+      password: password
+
+    });
+
+
+    if (error) {
+
+      console.error(error);
+
+      showModal(
+        "登录失败：昵称或密码错误。"
+      );
+
+      return;
+    }
+
+
+    currentUser = data.user;
+
+    document.getElementById("password").value = "";
+
+    await loadCurrentProfile();
+
+    updateUserStatus();
+
+    await loadPosts();
+
+  } catch (error) {
+
+    console.error(error);
+
+    showModal(
+      "登录过程中发生错误。"
+    );
+
+  }
+}
+
+
+/* =========================================================
+   退出登录
+========================================================= */
+
+async function logout() {
+
+  const {
+    error
+  } = await db.auth.signOut();
+
+
+  if (error) {
+
+    console.error(error);
+
+    showModal(
+      "退出登录失败：" + error.message
+    );
+
+    return;
+  }
+
+
+  currentUser = null;
+
+  profileMap = {};
+
+  updateUserStatus();
+
+  await loadPosts();
+}
+
+
+/* =========================================================
+   获取当前用户昵称
+========================================================= */
+
+async function loadCurrentProfile() {
+
+  if (!currentUser) {
+    return;
+  }
+
+
+  const {
+    data,
+    error
+  } = await db
+    .from("profiles")
+    .select("id,nickname")
+    .eq("id", currentUser.id)
+    .maybeSingle();
+
+
+  if (error) {
+
+    console.error(error);
+
+    return;
+  }
+
+
+  if (data) {
+
+    profileMap[data.id] =
+      data.nickname;
+  }
+}
+
+
+/* =========================================================
+   更新登录状态
+========================================================= */
+
+function updateUserStatus() {
+
+  const status =
+    document.getElementById("userStatus");
+
+
+  if (currentUser) {
+
+    const nickname =
+      profileMap[currentUser.id] ||
+      "已登录用户";
+
+
+    status.textContent =
+      `当前登录：${nickname} · 可以发帖和评论`;
+
+  } else {
+
+    status.textContent =
+      "当前状态：未登录，仅可浏览";
+  }
+}
+
+
+/* =========================================================
+   获取用户昵称
+========================================================= */
+
+async function loadProfiles(userIds) {
+
+  const uniqueIds =
+    [
+      ...new Set(
+        userIds.filter(Boolean)
+      )
+    ];
+
+
+  if (uniqueIds.length === 0) {
+    return;
+  }
+
+
+  const {
+    data,
+    error
+  } = await db
+    .from("profiles")
+    .select("id,nickname")
+    .in("id", uniqueIds);
+
+
+  if (error) {
+
+    console.error(
+      "加载用户资料失败：",
+      error
+    );
+
+    return;
+  }
+
+
+  for (const profile of data || []) {
+
+    profileMap[profile.id] =
+      profile.nickname;
+  }
+}
+
+
+/* =========================================================
+   加载帖子
+========================================================= */
+
+async function loadPosts() {
+
+  const postsContainer =
+    document.getElementById("posts");
+
+
+  postsContainer.innerHTML =
+    `<div class="loading">
+      正在加载帖子...
+    </div>`;
+
+
+  try {
+
+    /* 获取帖子 */
+
+    const {
+      data: postsData,
+      error: postsError
+    } = await db
+      .from("posts")
+      .select(
+        "id,title,content,author_id,created_at"
+      )
+      .order(
+        "created_at",
+        {
+          ascending: false
+        }
+      );
+
+
+    if (postsError) {
+
+      console.error(postsError);
+
+      postsContainer.innerHTML =
+        `<div class="empty">
+          帖子加载失败，请检查 Supabase 配置和 RLS。
         </div>`;
-      });
-      groupChatBox.innerHTML = html;
-      groupChatBox.scrollTop = groupChatBox.scrollHeight;
+
+      return;
     }
 
-    function renderPrivateChat() {
-      const target = chars.find(c => c.id === privateTargetId);
-      if (!target) {
-        privateChatBox.innerHTML = `<div style="color:#6a789a;text-align:center;padding:30px 0;">选择私聊对象</div>`;
-        return;
-      }
-      const msgs = chatLog.filter(m => m.private && (m.sender === target.name || m.sender === '你'));
-      if (msgs.length === 0) {
-        privateChatBox.innerHTML = `<div style="color:#6a789a;text-align:center;padding:30px 0;">💬 和 ${target.name} 的私聊</div>`;
-        return;
-      }
-      let html = '';
-      msgs.forEach(m => {
-        const isSelf = m.sender === '你';
-        html += `<div class="msg ${isSelf?'self':''}">
-          <div class="sender">${m.sender}</div>
-          <div class="content">${m.content}</div>
-          <div class="time">${m.time}</div>
+
+    const posts =
+      postsData || [];
+
+
+    if (posts.length === 0) {
+
+      postsContainer.innerHTML =
+        `<div class="empty">
+          还没有帖子，来发布第一条吧 🌱
         </div>`;
-      });
-      privateChatBox.innerHTML = html;
-      privateChatBox.scrollTop = privateChatBox.scrollHeight;
+
+      return;
     }
 
-    function renderMoments() {
-      if (moments.length === 0) {
-        momentList.innerHTML = `<div style="color:#6a789a;text-align:center;padding:20px 0;">暂无动态</div>`;
-        return;
-      }
-      let html = '';
-      moments.slice().reverse().forEach(m => {
-        html += `
-          <div class="moment-item">
-            <div class="m-name">${m.sender}</div>
-            <div class="m-text">${m.text}</div>
-            <div class="m-time">${m.time}</div>
-          </div>
-        `;
-      });
-      momentList.innerHTML = html;
-    }
 
-    function renderGroupTags() {
-      let html = '';
-      chars.forEach(c => {
-        const active = (c.id === currentSpeakerId) ? 'active' : '';
-        html += `<span class="${active}" data-id="${c.id}">${c.name}</span>`;
-      });
-      groupCharTags.innerHTML = html;
-      // 点击标签设为发言者
-      groupCharTags.querySelectorAll('span').forEach(el => {
-        el.addEventListener('click', function() {
-          const id = parseInt(this.dataset.id);
-          setCurrentSpeaker(id);
-        });
-      });
-    }
+    /* 获取发帖人的昵称 */
 
-    function setCurrentSpeaker(id) {
-      currentSpeakerId = id;
-      // 更新下拉
-      [groupSpeaker, privateSpeaker].forEach(sel => {
-        if (sel) sel.value = id;
-      });
-      renderGroupTags();
-    }
+    await loadProfiles(
+      posts.map(
+        post => post.author_id
+      )
+    );
 
-    function updateSelects() {
-      [groupSpeaker, privateSpeaker].forEach(sel => {
-        if (!sel) return;
-        sel.innerHTML = '<option value="">发言角色</option>';
-        chars.forEach(c => {
-          const opt = document.createElement('option');
-          opt.value = c.id;
-          opt.textContent = c.name;
-          if (c.id === currentSpeakerId) opt.selected = true;
-          sel.appendChild(opt);
-        });
-        if (currentSpeakerId && !chars.some(c=>c.id===currentSpeakerId)) {
-          currentSpeakerId = chars.length? chars[0].id : null;
-          if (currentSpeakerId) sel.value = currentSpeakerId;
-        } else if (!currentSpeakerId && chars.length) {
-          currentSpeakerId = chars[0].id;
-          sel.value = currentSpeakerId;
+
+    /* 获取评论 */
+
+    const postIds =
+      posts.map(
+        post => post.id
+      );
+
+
+    const {
+      data: commentsData,
+      error: commentsError
+    } = await db
+      .from("comments")
+      .select(
+        "id,post_id,content,author_id,created_at"
+      )
+      .in(
+        "post_id",
+        postIds
+      )
+      .order(
+        "created_at",
+        {
+          ascending: true
         }
-      });
-      // 私聊目标
-      privateTarget.innerHTML = '<option value="">选择角色</option>';
-      chars.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.id;
-        opt.textContent = c.name;
-        if (c.id === privateTargetId) opt.selected = true;
-        privateTarget.appendChild(opt);
-      });
-      if (privateTargetId && !chars.some(c=>c.id===privateTargetId)) {
-        privateTargetId = chars.length? chars[0].id : null;
-        if (privateTargetId) privateTarget.value = privateTargetId;
-      } else if (!privateTargetId && chars.length) {
-        privateTargetId = chars[0].id;
-        privateTarget.value = privateTargetId;
+      );
+
+
+    if (commentsError) {
+
+      console.error(
+        commentsError
+      );
+    }
+
+
+    const comments =
+      commentsData || [];
+
+
+    /* 获取评论用户昵称 */
+
+    await loadProfiles(
+      comments.map(
+        comment => comment.author_id
+      )
+    );
+
+
+    /* 评论按照帖子分类 */
+
+    const commentsByPost = {};
+
+
+    for (const comment of comments) {
+
+      if (
+        !commentsByPost[comment.post_id]
+      ) {
+
+        commentsByPost[comment.post_id] = [];
       }
-      renderGroupTags();
+
+
+      commentsByPost[comment.post_id]
+        .push(comment);
     }
 
-    // ---- 核心操作 ----
-    function sendGroupMessage() {
-      const speakerId = parseInt(groupSpeaker.value);
-      if (!speakerId) { alert('选择发言角色'); return; }
-      const char = chars.find(c => c.id === speakerId);
-      if (!char) return;
-      const text = groupInput.value.trim();
-      if (!text) { alert('输入消息'); return; }
-      const time = timeStr();
-      chatLog.push({ sender: '你', content: text, time, private: false });
-      const reply = generateReply(char, text);
-      chatLog.push({ sender: char.name, content: reply, time: timeStr(), private: false });
-      groupInput.value = '';
-      setCurrentSpeaker(char.id);
-      renderGroupChat();
-      updateSelects();
-    }
 
-    function sendPrivateMessage() {
-      const speakerId = parseInt(privateSpeaker.value);
-      if (!speakerId) { alert('选择发言角色'); return; }
-      const char = chars.find(c => c.id === speakerId);
-      if (!char) return;
-      const targetId = parseInt(privateTarget.value);
-      if (!targetId) { alert('选择私聊对象'); return; }
-      const target = chars.find(c => c.id === targetId);
-      if (!target) return;
-      const text = privateInput.value.trim();
-      if (!text) { alert('输入消息'); return; }
-      const time = timeStr();
-      chatLog.push({ sender: '你', content: text, time, private: true, target: target.name });
-      const reply = generateReply(char, text);
-      chatLog.push({ sender: char.name, content: reply, time: timeStr(), private: true, target: target.name });
-      privateInput.value = '';
-      setCurrentSpeaker(char.id);
-      renderPrivateChat();
-      updateSelects();
-    }
+    /* 生成帖子 HTML */
 
-    function publishMoment() {
-      if (!currentSpeakerId) { alert('请先在群聊标签中选择一个角色'); return; }
-      const char = chars.find(c => c.id === currentSpeakerId);
-      if (!char) return;
-      const text = generateMoment(char);
-      moments.push({ sender: char.name, text, time: timeStr() });
-      renderMoments();
-    }
+    postsContainer.innerHTML =
+      posts
+        .map(post => {
 
-    // ---- 页面切换 ----
-    function navigateTo(page) {
-      currentPage = page;
-      Object.keys(pages).forEach(key => {
-        pages[key].classList.toggle('active', key === page);
-      });
-      navBtns.forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.page === page);
-      });
-      if (page === 'group') { renderGroupChat(); updateSelects(); }
-      if (page === 'private') { renderPrivateChat(); updateSelects(); }
-      if (page === 'moment') { renderMoments(); }
-    }
+          const nickname =
+            profileMap[post.author_id] ||
+            "未知用户";
 
-    // ---- 默认角色 ----
-    function initDefault() {
-      chars = [
-        { id: nextId++, name: '林汐', personality: '温柔细腻，善解人意', appearance: '黑长直发，琥珀眼眸', height: '165cm', backstory: '山村支教三年，爱植物' },
-        { id: nextId++, name: '陆沉', personality: '毒舌傲娇，内心正直', appearance: '银灰短发，黑曜石耳钉', height: '188cm', backstory: '前黑客，现咖啡馆老板' },
-        { id: nextId++, name: '苏晚', personality: '热情活泼，乐观开朗', appearance: '金色卷发，雀斑脸', height: '158cm', backstory: '独立音乐人，爱旅行' },
-      ];
-      currentSpeakerId = chars[0].id;
-      chatLog = [
-        { sender: '林汐', content: '今天院子里开了第一朵茉莉，好香啊。', time: '10:23', private: false },
-        { sender: '陆沉', content: '哼，花有什么好闻的，不如咖啡豆。', time: '10:25', private: false },
-        { sender: '苏晚', content: '哇！茉莉！我要去看！', time: '10:26', private: false },
-      ];
-      moments = [
-        { sender: '林汐', text: '茉莉花开了，岁月静好。', time: '10:30' },
-        { sender: '陆沉', text: '今天的豆子烘焙度刚好，完美。', time: '10:35' },
-        { sender: '苏晚', text: '新写了一首歌，好开心！！', time: '10:40' },
-      ];
-      privateTargetId = chars[1]?.id || null;
-    }
-    initDefault();
 
-    // ---- 事件绑定 ----
-    navBtns.forEach(btn => {
-      btn.addEventListener('click', function() {
-        const page = this.dataset.page;
-        if (page === 'welcome') {
-          // 回到欢迎页，但保留数据
-          navigateTo('welcome');
-        } else {
-          navigateTo(page);
-        }
-      });
+          const postComments =
+            commentsByPost[post.id] ||
+            [];
+
+
+          let commentsHTML =
+            "";
+
+
+          if (postComments.length === 0) {
+
+            commentsHTML =
+              `<div class="time">
+                暂无评论
+              </div>`;
+
+          } else {
+
+            commentsHTML =
+              postComments
+                .map(comment => {
+
+                  const commentNickname =
+                    profileMap[
+                      comment.author_id
+                    ] ||
+                    "未知用户";
+
+
+                  return `
+                    <div class="comment">
+
+                      <div class="comment-header">
+
+                        <div class="avatar">
+                          ${escapeHTML(
+                            avatarLetter(
+                              commentNickname
+                            )
+                          )}
+                        </div>
+
+                        <div>
+
+                          <div class="author">
+                            ${escapeHTML(
+                              commentNickname
+                            )}
+                          </div>
+
+                          <div class="time">
+                            ${escapeHTML(
+                              formatTime(
+                                comment.created_at
+                              )
+                            )}
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                      <div class="comment-content">
+                        ${escapeHTML(
+                          comment.content
+                        )}
+                      </div>
+
+                    </div>
+                  `;
+
+                })
+                .join("");
+          }
+
+
+          return `
+            <article class="post">
+
+              <!-- 发帖人 -->
+
+              <div class="post-header">
+
+                <div class="avatar">
+                  ${escapeHTML(
+                    avatarLetter(
+                      nickname
+                    )
+                  )}
+                </div>
+
+                <div>
+
+                  <div class="author">
+                    ${escapeHTML(
+                      nickname
+                    )}
+                  </div>
+
+                  <div class="time">
+                    ${escapeHTML(
+                      formatTime(
+                        post.created_at
+                      )
+                    )}
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <!-- 标题 -->
+
+              <h2 class="post-title">
+                ${escapeHTML(
+                  post.title
+                )}
+              </h2>
+
+
+              <!-- 正文 -->
+
+              <div class="post-content">
+                ${escapeHTML(
+                  post.content
+                )}
+              </div>
+
+
+              <!-- 评论区域 -->
+
+              <div class="comments">
+
+                ${
+                  currentUser
+
+                  ?
+
+                  `
+                    <div class="comment-input-row">
+
+                      <input
+                        id="comment-${post.id}"
+                        type="text"
+                        maxlength="5000"
+                        placeholder="写下你的评论..."
+                      >
+
+                      <button
+                        onclick="createComment('${post.id}')"
+                      >
+                        发送评论
+                      </button>
+
+                    </div>
+                  `
+
+                  :
+
+                  `
+                    <div class="comment-input-row">
+
+                      <input
+                        type="text"
+                        placeholder="登录后可以发表评论"
+                        disabled
+                      >
+
+                      <button
+                        class="secondary"
+                        onclick="requireLogin()"
+                      >
+                        登录评论
+                      </button>
+
+                    </div>
+                  `
+                }
+
+
+                ${commentsHTML}
+
+              </div>
+
+            </article>
+          `;
+
+        })
+        .join("");
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    postsContainer.innerHTML =
+      `<div class="empty">
+        加载失败，请检查网络和 Supabase 配置。
+      </div>`;
+  }
+}
+
+
+/* =========================================================
+   发布帖子
+========================================================= */
+
+async function createPost() {
+
+  if (!currentUser) {
+
+    requireLogin();
+
+    return;
+  }
+
+
+  const title =
+    document
+      .getElementById("postTitle")
+      .value
+      .trim();
+
+
+  const content =
+    document
+      .getElementById("postContent")
+      .value
+      .trim();
+
+
+  if (!title) {
+
+    showModal(
+      "请输入帖子标题。"
+    );
+
+    return;
+  }
+
+
+  if (!content) {
+
+    showModal(
+      "请输入帖子正文。"
+    );
+
+    return;
+  }
+
+
+  const {
+    error
+  } = await db
+    .from("posts")
+    .insert({
+
+      title: title,
+
+      content: content,
+
+      author_id: currentUser.id
+
     });
 
-    startBtn.addEventListener('click', function() {
-      navigateTo('group');
+
+  if (error) {
+
+    console.error(error);
+
+    showModal(
+      "发布失败：" +
+      error.message
+    );
+
+    return;
+  }
+
+
+  document.getElementById(
+    "postTitle"
+  ).value = "";
+
+
+  document.getElementById(
+    "postContent"
+  ).value = "";
+
+
+  await loadPosts();
+}
+
+
+/* =========================================================
+   发布评论
+========================================================= */
+
+async function createComment(postId) {
+
+  if (!currentUser) {
+
+    requireLogin();
+
+    return;
+  }
+
+
+  const input =
+    document.getElementById(
+      `comment-${postId}`
+    );
+
+
+  if (!input) {
+    return;
+  }
+
+
+  const content =
+    input.value.trim();
+
+
+  if (!content) {
+
+    showModal(
+      "请输入评论内容。"
+    );
+
+    return;
+  }
+
+
+  const {
+    error
+  } = await db
+    .from("comments")
+    .insert({
+
+      post_id: postId,
+
+      content: content,
+
+      author_id: currentUser.id
+
     });
 
-    groupSendBtn.addEventListener('click', sendGroupMessage);
-    groupInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); sendGroupMessage(); } });
 
-    privateSendBtn.addEventListener('click', sendPrivateMessage);
-    privateInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); sendPrivateMessage(); } });
+  if (error) {
 
-    privateTarget.addEventListener('change', function() {
-      privateTargetId = parseInt(this.value) || null;
-      renderPrivateChat();
-    });
+    console.error(error);
 
-    publishBtn.addEventListener('click', publishMoment);
+    showModal(
+      "评论发送失败：" +
+      error.message
+    );
 
-    // 角色编辑 (点击标签可编辑)
-    // 用模态框管理角色，简单起见：双击角色标签编辑
-    groupCharTags.addEventListener('dblclick', function(e) {
-      const el = e.target.closest('span');
-      if (!el) return;
-      const id = parseInt(el.dataset.id);
-      openModal(id);
-    });
+    return;
+  }
 
-    // modal
-    function openModal(id=null) {
-      editingId = id;
-      if (id === null) {
-        modalTitle.textContent = '✨ 新建角色';
-        cName.value = ''; cPersonality.value = ''; cAppearance.value = ''; cHeight.value = ''; cBackstory.value = '';
-      } else {
-        const c = chars.find(ch => ch.id === id);
-        if (!c) return;
-        modalTitle.textContent = `✎ 编辑 ${c.name}`;
-        cName.value = c.name;
-        cPersonality.value = c.personality || '';
-        cAppearance.value = c.appearance || '';
-        cHeight.value = c.height || '';
-        cBackstory.value = c.backstory || '';
+
+  input.value = "";
+
+  await loadPosts();
+}
+
+
+/* =========================================================
+   初始化
+========================================================= */
+
+async function init() {
+
+  /* 检查两个配置有没有修改 */
+
+  if (
+    SUPABASE_URL === "需要修改" ||
+    SUPABASE_PUBLISHABLE_KEY === "需要修改"
+  ) {
+
+    document.getElementById(
+      "posts"
+    ).innerHTML =
+      `<div class="empty">
+        请先修改 HTML 顶部的
+        SUPABASE_URL 和
+        SUPABASE_PUBLISHABLE_KEY。
+      </div>`;
+
+    return;
+  }
+
+
+  /* 获取登录状态 */
+
+  const {
+    data
+  } = await db.auth.getSession();
+
+
+  currentUser =
+    data.session
+      ? data.session.user
+      : null;
+
+
+  /* 获取用户资料 */
+
+  if (currentUser) {
+
+    await loadCurrentProfile();
+  }
+
+
+  updateUserStatus();
+
+  await loadPosts();
+
+
+  /* 监听登录状态变化 */
+
+  db.auth.onAuthStateChange(
+    async (_event, session) => {
+
+      currentUser =
+        session
+          ? session.user
+          : null;
+
+
+      if (currentUser) {
+
+        await loadCurrentProfile();
       }
-      modal.classList.add('open');
-    }
-    function closeModal() { modal.classList.remove('open'); editingId = null; }
-    function saveChar() {
-      const name = cName.value.trim();
-      if (!name) { alert('请输入名称'); return; }
-      const personality = cPersonality.value.trim() || '未设定';
-      const appearance = cAppearance.value.trim() || '未设定';
-      const height = cHeight.value.trim() || '未设定';
-      const backstory = cBackstory.value.trim() || '暂无经历';
-      if (editingId !== null) {
-        const idx = chars.findIndex(c => c.id === editingId);
-        if (idx !== -1) {
-          chars[idx] = { ...chars[idx], name, personality, appearance, height, backstory };
-        }
-      } else {
-        const newChar = { id: nextId++, name, personality, appearance, height, backstory };
-        chars.push(newChar);
-        currentSpeakerId = newChar.id;
-      }
-      closeModal();
-      updateSelects();
-      renderGroupChat();
-      renderPrivateChat();
-      renderMoments();
-    }
-    modalCancel.addEventListener('click', closeModal);
-    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-    modalSave.addEventListener('click', saveChar);
 
-    // 加一个快速新建按钮（在群聊标签上方）
-    const addCharBtn = document.createElement('button');
-    addCharBtn.textContent = '+ 新建角色';
-    addCharBtn.style.cssText = 'background:#2d3657; border:none; color:#c8d2f0; padding:2px 14px; border-radius:30px; font-size:0.7rem; cursor:pointer; margin-left:6px;';
-    groupCharTags.parentNode.insertBefore(addCharBtn, groupCharTags.nextSibling);
-    addCharBtn.addEventListener('click', () => openModal(null));
 
-    // 初始化
-    function init() {
-      updateSelects();
-      renderGroupChat();
-      renderPrivateChat();
-      renderMoments();
-      navigateTo('welcome');
+      updateUserStatus();
+
+      await loadPosts();
+
     }
-    init();
-  })();
+  );
+}
+
+
+/* 启动 */
+
+init();
+
 </script>
+
 </body>
 </html>
