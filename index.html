@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>🎭 自定义角色群聊模拟器</title>
+  <title>🎭 角色群聊 · 朋友圈</title>
   <style>
     * {
       margin: 0;
@@ -12,892 +12,775 @@
       font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
     }
     body {
-      background: linear-gradient(145deg, #1a1e2c 0%, #2a2f3f 100%);
+      background: #141824;
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 16px;
+      padding: 14px;
     }
-    .app-container {
-      max-width: 1100px;
+    .app {
+      max-width: 1300px;
       width: 100%;
-      background: rgba(30, 35, 48, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(24, 29, 44, 0.9);
+      backdrop-filter: blur(8px);
       border-radius: 40px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
-      padding: 24px 20px 28px;
-      transition: all 0.2s ease;
-      border: 1px solid rgba(255, 255, 255, 0.03);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+      padding: 20px 20px 24px;
+      border: 1px solid rgba(255,255,255,0.04);
     }
-
     h1 {
-      font-size: 1.8rem;
-      font-weight: 600;
-      letter-spacing: 0.5px;
       color: #edeff7;
+      font-size: 1.7rem;
+      font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       padding-bottom: 14px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      margin-bottom: 20px;
-    }
-    h1 small {
-      font-size: 0.9rem;
-      font-weight: 400;
-      color: #9aa1b9;
-      margin-left: auto;
-      background: rgba(255, 255, 255, 0.04);
-      padding: 6px 14px;
-      border-radius: 40px;
-      letter-spacing: 0.3px;
-    }
-
-    .main-grid {
-      display: flex;
-      flex-direction: row;
-      gap: 22px;
+      border-bottom: 1px solid #2d344b;
+      margin-bottom: 18px;
       flex-wrap: wrap;
     }
-
-    /* ----- 左侧：角色面板 ----- */
-    .character-panel {
-      flex: 1.1;
-      min-width: 280px;
-      background: rgba(20, 24, 36, 0.6);
-      border-radius: 28px;
-      padding: 18px 16px 20px;
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      backdrop-filter: blur(4px);
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+    h1 small {
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: #8f9bbd;
+      margin-left: auto;
+      background: #252c42;
+      padding: 4px 16px;
+      border-radius: 40px;
     }
-
-    .panel-title {
-      color: #b9c2e0;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-weight: 500;
-      margin-bottom: 14px;
+    .grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    /* 左侧角色面板 */
+    .left-panel {
+      flex: 1.2;
+      min-width: 270px;
+      background: #1b2134;
+      border-radius: 28px;
+      padding: 18px 14px 20px;
+      border: 1px solid #2b324b;
+      box-shadow: inset 0 0 12px rgba(0,0,0,0.4);
+    }
+    .panel-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      color: #b7c2e6;
+      font-weight: 500;
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
     }
-    .panel-title button {
-      background: #4f5b7a;
+    .panel-header button {
+      background: #4a5880;
       border: none;
       color: white;
       padding: 4px 16px;
       border-radius: 30px;
       font-size: 0.8rem;
-      font-weight: 500;
       cursor: pointer;
       transition: 0.15s;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      font-weight: 500;
     }
-    .panel-title button:hover {
-      background: #6a7aa0;
-      transform: scale(1.02);
-    }
-
-    /* 角色列表 */
-    .character-list {
+    .panel-header button:hover { background: #6679aa; }
+    .char-list {
       display: flex;
       flex-direction: column;
       gap: 14px;
-      max-height: 460px;
+      max-height: 500px;
       overflow-y: auto;
       padding-right: 4px;
     }
-    .character-list::-webkit-scrollbar {
-      width: 5px;
-    }
-    .character-list::-webkit-scrollbar-track {
-      background: rgba(0,0,0,0.1);
-      border-radius: 10px;
-    }
-    .character-list::-webkit-scrollbar-thumb {
-      background: #5d6b8a;
-      border-radius: 10px;
-    }
+    .char-list::-webkit-scrollbar { width: 4px; }
+    .char-list::-webkit-scrollbar-thumb { background: #3d4a6b; border-radius: 10px; }
 
-    .character-card {
-      background: rgba(40, 46, 66, 0.7);
-      border-radius: 20px;
-      padding: 16px 16px 14px;
-      border-left: 4px solid #8e9fd3;
-      transition: 0.15s;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(2px);
-    }
-    .character-card.active {
-      border-left-color: #f5c542;
-      background: rgba(56, 63, 88, 0.8);
-    }
-    .character-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-    .character-name {
-      font-weight: 600;
-      font-size: 1.2rem;
-      color: #f0f3ff;
-      letter-spacing: 0.3px;
-    }
-    .character-name small {
-      font-weight: 400;
-      font-size: 0.75rem;
-      color: #a9b6db;
-      margin-left: 8px;
-      background: rgba(255,255,255,0.05);
-      padding: 2px 12px;
-      border-radius: 30px;
-    }
-    .character-actions {
-      display: flex;
-      gap: 6px;
-    }
-    .character-actions button {
-      background: transparent;
-      border: none;
-      color: #b6c2e6;
-      font-size: 0.9rem;
+    .char-card {
+      background: #232b42;
+      border-radius: 18px;
+      padding: 14px 14px 12px;
+      border-left: 4px solid #6578b0;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
       cursor: pointer;
-      padding: 2px 8px;
-      border-radius: 30px;
       transition: 0.1s;
     }
-    .character-actions .delete-btn:hover {
-      background: #5e3a4a;
-      color: #ff9e9e;
+    .char-card.active { border-left-color: #f5c542; background: #2e3653; }
+    .char-card .name {
+      font-weight: 600;
+      color: #eef3ff;
+      font-size: 1.1rem;
+      display: flex;
+      justify-content: space-between;
     }
-    .character-actions .edit-btn:hover {
-      background: #3a4a6a;
-      color: #d6e2ff;
-    }
-
-    .character-traits {
-      font-size: 0.8rem;
-      color: #b7c3e6;
-      background: rgba(0,0,0,0.15);
-      padding: 6px 12px;
+    .char-card .name small { font-weight: 400; font-size: 0.7rem; color: #96a2c9; }
+    .char-card .traits {
+      font-size: 0.75rem;
+      color: #b4c0e6;
+      background: #1a2136;
+      padding: 2px 12px;
       border-radius: 30px;
       display: inline-block;
       margin: 6px 0 4px;
-      backdrop-filter: blur(2px);
-      border: 1px solid rgba(255,255,255,0.02);
     }
-    .character-desc {
-      font-size: 0.9rem;
-      color: #cdd6f0;
-      line-height: 1.4;
-      margin-top: 6px;
-      padding: 6px 10px;
-      background: rgba(0,0,0,0.1);
+    .char-card .detail {
+      font-size: 0.8rem;
+      color: #b9c5ec;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 14px;
+      margin-top: 4px;
+    }
+    .char-card .detail span { background: #171e32; padding: 0 12px; border-radius: 30px; }
+    .char-card .backstory {
+      font-size: 0.8rem;
+      color: #c8d2f0;
+      background: #171e32;
+      padding: 6px 12px;
       border-radius: 14px;
-      border-left: 2px solid #5e6f96;
-    }
-    .character-detail-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px 14px;
       margin-top: 6px;
-      font-size: 0.8rem;
-      color: #a6b2d6;
+      border-left: 2px solid #4f6190;
     }
-    .character-detail-row span {
-      background: rgba(255, 255, 255, 0.02);
-      padding: 2px 12px;
-      border-radius: 30px;
-      border: 1px solid rgba(255, 255, 255, 0.02);
-    }
-
-    /* ----- 右侧：聊天区域 ----- */
-    .chat-panel {
-      flex: 2.2;
-      min-width: 300px;
-      background: rgba(16, 20, 30, 0.6);
-      border-radius: 28px;
-      padding: 16px 16px 12px;
-      backdrop-filter: blur(4px);
-      border: 1px solid rgba(255, 255, 255, 0.03);
+    .char-actions {
       display: flex;
-      flex-direction: column;
-      height: 560px;
-    }
-
-    .chat-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding-right: 6px;
-      margin-bottom: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .chat-messages::-webkit-scrollbar {
-      width: 5px;
-    }
-    .chat-messages::-webkit-scrollbar-track {
-      background: rgba(0,0,0,0.1);
-      border-radius: 10px;
-    }
-    .chat-messages::-webkit-scrollbar-thumb {
-      background: #4f5d7a;
-      border-radius: 10px;
-    }
-
-    .message {
-      background: rgba(45, 52, 75, 0.6);
-      border-radius: 20px 20px 20px 4px;
-      padding: 14px 16px;
-      border-left: 3px solid #7b8ec7;
-      backdrop-filter: blur(2px);
-      transition: 0.1s;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    }
-    .message .msg-sender {
-      font-weight: 600;
-      color: #d3defa;
-      font-size: 0.95rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .message .msg-sender .badge {
-      font-weight: 400;
-      font-size: 0.6rem;
-      background: #38405c;
-      padding: 2px 10px;
-      border-radius: 30px;
-      color: #bcc6e6;
-    }
-    .message .msg-content {
-      color: #eef3ff;
+      gap: 6px;
       margin-top: 6px;
-      font-size: 0.95rem;
-      line-height: 1.5;
-      word-break: break-word;
+      justify-content: flex-end;
     }
-    .message .msg-meta {
-      font-size: 0.65rem;
-      color: #808bb0;
-      margin-top: 5px;
-      text-align: right;
-      opacity: 0.7;
-    }
-
-    .chat-input-area {
-      display: flex;
-      gap: 8px;
-      margin-top: 6px;
-      background: rgba(0, 0, 0, 0.2);
-      padding: 6px 6px 6px 16px;
-      border-radius: 60px;
-      border: 1px solid rgba(255, 255, 255, 0.03);
-    }
-    .chat-input-area select {
-      background: #252b3f;
-      border: none;
-      color: #e6edff;
-      padding: 8px 12px;
-      border-radius: 40px;
-      font-weight: 500;
-      font-size: 0.8rem;
-      outline: none;
-      cursor: pointer;
-      min-width: 110px;
-      border: 1px solid #3e4663;
-    }
-    .chat-input-area select option {
-      background: #1e2438;
-    }
-    .chat-input-area input {
-      flex: 1;
+    .char-actions button {
       background: transparent;
       border: none;
-      padding: 10px 4px;
-      color: #f0f5ff;
-      font-size: 0.95rem;
-      outline: none;
-      min-width: 100px;
-    }
-    .chat-input-area input::placeholder {
-      color: #6e7b9e;
-      font-weight: 300;
-      letter-spacing: 0.2px;
-    }
-    .chat-input-area button {
-      background: #5a6b92;
-      border: none;
-      border-radius: 40px;
-      padding: 8px 20px;
-      color: white;
-      font-weight: 600;
-      font-size: 0.9rem;
+      color: #a9b8e0;
+      font-size: 0.8rem;
+      padding: 2px 12px;
+      border-radius: 30px;
       cursor: pointer;
-      transition: 0.15s;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      letter-spacing: 0.5px;
     }
-    .chat-input-area button:hover {
-      background: #7488b5;
-      transform: scale(1.02);
-    }
+    .char-actions .del:hover { background: #5e3344; color: #ff9e9e; }
+    .char-actions .edit:hover { background: #2f3d64; color: #d6e2ff; }
 
-    /* 辅助 */
-    .empty-hint {
-      color: #7a86aa;
-      text-align: center;
-      padding: 40px 10px;
-      font-size: 0.9rem;
-      opacity: 0.7;
+    /* 中间聊天 + 右侧朋友圈 */
+    .right-wrap {
+      flex: 3;
+      min-width: 360px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
     }
+    .chat-area {
+      background: #181f32;
+      border-radius: 28px;
+      padding: 16px 16px 12px;
+      border: 1px solid #2a314b;
+      height: 420px;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-mode {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .chat-mode button {
+      background: #2d3653;
+      border: none;
+      color: #bcc7ee;
+      padding: 4px 16px;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.1s;
+    }
+    .chat-mode button.active { background: #4f6190; color: white; }
+    .chat-mode select {
+      background: #1f263e;
+      border: 1px solid #3f4b70;
+      color: #e6edff;
+      padding: 4px 12px;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      outline: none;
+    }
+    .chat-msgs {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 4px;
+      margin-bottom: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .chat-msgs::-webkit-scrollbar { width: 4px; }
+    .chat-msgs::-webkit-scrollbar-thumb { background: #3d4a6b; border-radius: 10px; }
 
-    /* 模态框 (新增/编辑) */
-    .modal-overlay {
+    .msg {
+      background: #232b44;
+      border-radius: 18px 18px 18px 4px;
+      padding: 10px 14px;
+      border-left: 3px solid #6e82ba;
+    }
+    .msg .sender { font-weight: 600; color: #d3defa; font-size: 0.9rem; }
+    .msg .content { color: #f0f5ff; margin-top: 4px; word-break: break-word; }
+    .msg .time { font-size: 0.6rem; color: #7a88b0; text-align: right; margin-top: 4px; }
+
+    .chat-input {
+      display: flex;
+      gap: 8px;
+      background: #0f1526;
+      padding: 4px 4px 4px 16px;
+      border-radius: 60px;
+      border: 1px solid #2f3857;
+    }
+    .chat-input select { background: #1b233b; border: none; color: #dae2ff; padding: 6px 12px; border-radius: 40px; font-size: 0.8rem; outline: none; min-width: 100px; }
+    .chat-input input { flex:1; background: transparent; border: none; padding: 8px 4px; color: #f0f5ff; outline: none; font-size: 0.95rem; }
+    .chat-input input::placeholder { color: #5d6b92; }
+    .chat-input button { background: #5a6b92; border: none; border-radius: 40px; padding: 6px 20px; color: white; font-weight: 600; cursor: pointer; transition: 0.15s; }
+    .chat-input button:hover { background: #7488b5; }
+
+    /* 朋友圈 */
+    .moment-area {
+      background: #181f32;
+      border-radius: 28px;
+      padding: 16px 16px 12px;
+      border: 1px solid #2a314b;
+      max-height: 320px;
+      display: flex;
+      flex-direction: column;
+    }
+    .moment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #b7c2e6;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    .moment-header button {
+      background: #3f4d72;
+      border: none;
+      color: white;
+      padding: 2px 16px;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    .moment-list {
+      flex:1;
+      overflow-y: auto;
+      max-height: 200px;
+      padding-right: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .moment-list::-webkit-scrollbar { width: 4px; }
+    .moment-list::-webkit-scrollbar-thumb { background: #3d4a6b; border-radius: 10px; }
+
+    .moment-item {
+      background: #20293f;
+      border-radius: 18px;
+      padding: 10px 14px;
+      border-left: 3px solid #b3a0d6;
+    }
+    .moment-item .m-name { font-weight: 600; color: #d1dbfa; font-size: 0.9rem; }
+    .moment-item .m-text { color: #eef3ff; margin-top: 4px; font-size: 0.9rem; }
+    .moment-item .m-time { font-size: 0.6rem; color: #7a88b0; text-align: right; }
+
+    /* modal */
+    .modal {
       display: none;
       position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
+      top:0;left:0;width:100%;height:100%;
       background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(8px);
-      justify-content: center;
+      backdrop-filter: blur(6px);
       align-items: center;
+      justify-content: center;
       z-index: 999;
     }
-    .modal-overlay.open {
-      display: flex;
-    }
+    .modal.open { display: flex; }
     .modal-box {
-      background: #262d44;
+      background: #252d47;
       max-width: 420px;
       width: 90%;
       padding: 28px 24px 32px;
       border-radius: 36px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-      border: 1px solid rgba(255,255,255,0.04);
+      border: 1px solid #3f4a6e;
       color: #e8efff;
     }
-    .modal-box h2 {
-      margin-bottom: 18px;
-      font-weight: 500;
-      font-size: 1.5rem;
-      letter-spacing: 0px;
-    }
-    .modal-box label {
-      display: block;
-      font-size: 0.8rem;
-      margin-top: 14px;
-      color: #b1bedf;
-      letter-spacing: 0.3px;
-    }
+    .modal-box h2 { margin-bottom: 16px; font-weight: 500; }
+    .modal-box label { display: block; font-size: 0.8rem; color: #b1bedf; margin-top: 14px; }
     .modal-box input, .modal-box textarea {
       width: 100%;
-      background: #1b212f;
-      border: 1px solid #3d4663;
+      background: #171f32;
+      border: 1px solid #3d4668;
       border-radius: 24px;
-      padding: 12px 16px;
+      padding: 10px 16px;
       color: #f0f5ff;
       font-size: 0.95rem;
       margin-top: 4px;
       outline: none;
-      transition: 0.1s;
     }
-    .modal-box input:focus, .modal-box textarea:focus {
-      border-color: #7d91ca;
-      box-shadow: 0 0 0 2px #3f4d77;
-    }
-    .modal-box textarea {
-      min-height: 70px;
-      resize: vertical;
-    }
-    .modal-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 12px;
-      margin-top: 24px;
-    }
-    .modal-actions button {
-      background: #3d4768;
-      border: none;
-      color: white;
-      padding: 10px 22px;
-      border-radius: 40px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: 0.1s;
-    }
-    .modal-actions .primary-btn {
-      background: #657bb0;
-    }
-    .modal-actions .primary-btn:hover {
-      background: #7d96cf;
-    }
-    .modal-actions .cancel-btn:hover {
-      background: #545f82;
-    }
+    .modal-box textarea { min-height: 60px; resize: vertical; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
+    .modal-actions button { background: #3d4768; border: none; color: white; padding: 8px 22px; border-radius: 40px; cursor: pointer; }
+    .modal-actions .primary { background: #657bb0; }
+    .modal-actions .primary:hover { background: #7d96cf; }
 
-    @media (max-width: 750px) {
-      .main-grid {
-        flex-direction: column;
-      }
-      .chat-panel {
-        height: 460px;
-      }
-      .character-panel {
-        min-width: unset;
-      }
+    @media (max-width: 780px) {
+      .right-wrap { min-width: unset; }
     }
   </style>
 </head>
 <body>
-
-<div class="app-container">
-  <h1>
-    🎭 群聊·造物
-    <small>自定义角色 · 按设定发言</small>
-  </h1>
-
-  <div class="main-grid">
-    <!-- 左侧角色面板 -->
-    <div class="character-panel">
-      <div class="panel-title">
-        <span>📋 角色列表</span>
-        <button id="addCharacterBtn">+ 新建</button>
-      </div>
-      <div class="character-list" id="characterListContainer">
-        <!-- 动态渲染 -->
-      </div>
-      <div style="margin-top: 12px; font-size: 0.7rem; color: #5f6b8a; text-align: center; border-top: 1px solid #2c3348; padding-top: 12px;">
-        点击角色卡可设为「当前发言者」
-      </div>
+<div class="app">
+  <h1>🎭 群聊·朋友圈 <small>自定义角色 · 按设定发言</small></h1>
+  <div class="grid">
+    <!-- 左：角色列表 -->
+    <div class="left-panel">
+      <div class="panel-header"><span>📋 角色</span><button id="addCharBtn">+ 新建</button></div>
+      <div class="char-list" id="charList"></div>
     </div>
 
-    <!-- 右侧聊天区域 -->
-    <div class="chat-panel">
-      <div class="chat-messages" id="chatMessages">
-        <div class="empty-hint">💬 发送消息，角色将按设定回复…</div>
+    <!-- 右：聊天 + 朋友圈 -->
+    <div class="right-wrap">
+      <!-- 聊天 -->
+      <div class="chat-area">
+        <div class="chat-mode">
+          <button id="groupChatBtn" class="active">💬 群聊</button>
+          <button id="privateChatBtn">🔒 私聊</button>
+          <select id="privateTargetSelect" style="display:none; min-width:100px;"><option value="">选择私聊对象</option></select>
+          <span style="color:#7e8bb0; font-size:0.7rem; margin-left:auto;">点击角色卡设为发言者</span>
+        </div>
+        <div class="chat-msgs" id="chatMsgs"></div>
+        <div class="chat-input">
+          <select id="speakerSelect"><option value="">— 发言角色 —</option></select>
+          <input type="text" id="chatInput" placeholder="输入消息…" />
+          <button id="sendBtn">发送</button>
+        </div>
       </div>
-      <div class="chat-input-area">
-        <select id="speakerSelect">
-          <option value="">— 选择角色 —</option>
-        </select>
-        <input type="text" id="chatInput" placeholder="输入对话内容…" />
-        <button id="sendMessageBtn">发送</button>
+      <!-- 朋友圈 -->
+      <div class="moment-area">
+        <div class="moment-header"><span>📱 朋友圈 · 按性格发言</span><button id="addMomentBtn">+ 发动态</button></div>
+        <div class="moment-list" id="momentList"></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- 模态框：新增/编辑角色 -->
-<div class="modal-overlay" id="characterModal">
+<!-- 模态框：角色编辑 -->
+<div class="modal" id="charModal">
   <div class="modal-box">
-    <h2 id="modalTitle">✨ 编辑角色</h2>
-    <label>角色名称</label>
-    <input type="text" id="charNameInput" placeholder="例如：林汐" />
-    <label>性格 / 设定 (影响发言风格)</label>
-    <input type="text" id="charPersonalityInput" placeholder="温柔、毒舌、冷静…" />
-    <label>外貌 / 长相</label>
-    <input type="text" id="charAppearanceInput" placeholder="黑发碧眼，高挑…" />
-    <label>身高</label>
-    <input type="text" id="charHeightInput" placeholder="178cm" />
-    <label>经历 / 背景 (可选)</label>
-    <textarea id="charBackstoryInput" placeholder="曾是星际探险家…"></textarea>
-    <div class="modal-actions">
-      <button class="cancel-btn" id="modalCancelBtn">取消</button>
-      <button class="primary-btn" id="modalSaveBtn">保存</button>
-    </div>
+    <h2 id="modalTitle">✨ 角色</h2>
+    <label>名称</label><input type="text" id="cName" placeholder="林汐" />
+    <label>性格 (影响发言风格)</label><input type="text" id="cPersonality" placeholder="温柔、毒舌、冷静…" />
+    <label>外貌</label><input type="text" id="cAppearance" placeholder="黑发碧眼" />
+    <label>身高</label><input type="text" id="cHeight" placeholder="165cm" />
+    <label>经历</label><textarea id="cBackstory" placeholder="曾经…"></textarea>
+    <div class="modal-actions"><button id="modalCancel">取消</button><button class="primary" id="modalSave">保存</button></div>
   </div>
 </div>
 
 <script>
   (function() {
-    // ----- 数据 -----
-    let characters = [];
-    let chatLog = [];
-    let editingId = null;        // 编辑时使用
+    // ---- 数据 ----
+    let chars = [];
     let nextId = 1;
+    let chatLog = [];           // { sender, content, time, private?: bool, target?: string }
+    let moments = [];           // { sender, text, time }
+    let currentSpeakerId = null;
+    let isPrivateMode = false;
+    let privateTargetId = null; // 私聊目标角色id
 
-    // DOM 元素
-    const characterListEl = document.getElementById('characterListContainer');
-    const chatMessagesEl = document.getElementById('chatMessages');
+    // DOM
+    const charListEl = document.getElementById('charList');
+    const chatMsgsEl = document.getElementById('chatMsgs');
     const speakerSelect = document.getElementById('speakerSelect');
     const chatInput = document.getElementById('chatInput');
-    const sendBtn = document.getElementById('sendMessageBtn');
-    const addBtn = document.getElementById('addCharacterBtn');
+    const sendBtn = document.getElementById('sendBtn');
+    const addCharBtn = document.getElementById('addCharBtn');
+    const groupChatBtn = document.getElementById('groupChatBtn');
+    const privateChatBtn = document.getElementById('privateChatBtn');
+    const privateTargetSelect = document.getElementById('privateTargetSelect');
+    const momentListEl = document.getElementById('momentList');
+    const addMomentBtn = document.getElementById('addMomentBtn');
 
-    // 模态框
-    const modalOverlay = document.getElementById('characterModal');
+    // modal
+    const modal = document.getElementById('charModal');
     const modalTitle = document.getElementById('modalTitle');
-    const charNameInput = document.getElementById('charNameInput');
-    const charPersonalityInput = document.getElementById('charPersonalityInput');
-    const charAppearanceInput = document.getElementById('charAppearanceInput');
-    const charHeightInput = document.getElementById('charHeightInput');
-    const charBackstoryInput = document.getElementById('charBackstoryInput');
-    const modalSaveBtn = document.getElementById('modalSaveBtn');
-    const modalCancelBtn = document.getElementById('modalCancelBtn');
+    const cName = document.getElementById('cName');
+    const cPersonality = document.getElementById('cPersonality');
+    const cAppearance = document.getElementById('cAppearance');
+    const cHeight = document.getElementById('cHeight');
+    const cBackstory = document.getElementById('cBackstory');
+    const modalCancel = document.getElementById('modalCancel');
+    const modalSave = document.getElementById('modalSave');
+    let editingId = null;
 
-    // ----- 初始示例角色 (符合设定) -----
-    function initDefaultCharacters() {
-      characters = [
-        {
-          id: nextId++,
-          name: '林汐',
-          personality: '温柔细腻，善解人意，说话轻声细语',
-          appearance: '黑长直发，琥珀色眼眸，常穿米色毛衣',
-          height: '165cm',
-          backstory: '曾在山村支教三年，喜欢植物和诗集'
-        },
-        {
-          id: nextId++,
-          name: '陆沉',
-          personality: '毒舌傲娇，但内心正直，常用讽刺语气',
-          appearance: '银灰色短发，左耳戴黑曜石耳钉，身高突出',
-          height: '188cm',
-          backstory: '前黑客，现咖啡馆老板，总是一副不耐烦的样子'
-        },
-        {
-          id: nextId++,
-          name: '苏晚',
-          personality: '热情活泼，乐观开朗，说话带感叹号',
-          appearance: '金色卷发，雀斑脸，总是笑容满面',
-          height: '158cm',
-          backstory: '独立音乐人，热爱即兴创作和旅行'
-        }
-      ];
-    }
-    initDefaultCharacters();
-
-    // 初始聊天消息 (展示设定)
-    function initChatLog() {
-      chatLog = [
-        { sender: '林汐', content: '今天院子里开了第一朵茉莉，好香啊。', time: '10:23' },
-        { sender: '陆沉', content: '哼，花有什么好闻的，不如咖啡豆的香气。', time: '10:25' },
-        { sender: '苏晚', content: '哇！茉莉！我最喜欢了！林汐姐姐我要去看！', time: '10:26' },
-      ];
-    }
-    initChatLog();
-
-    // ----- 辅助函数 -----
-    function formatTime() {
+    // ---- 工具 ----
+    function timeStr() {
       const d = new Date();
-      return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+      return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
     }
 
-    // 根据角色设定生成回复 (模拟)
-    function generateReplyByCharacter(char, userMessage) {
-      if (!char) return '…… (角色不存在)';
-      const name = char.name;
-      const personality = char.personality || '普通';
-      const p = personality.toLowerCase();
-      // 根据性格/设定 生成不同风格回复
+    // 根据角色设定生成回复 (不ooc)
+    function generateReply(char, userMsg) {
+      if (!char) return '……';
+      const p = (char.personality || '普通').toLowerCase();
       let reply = '';
-      if (p.includes('温柔') || p.includes('细腻') || p.includes('善解人意')) {
-        reply = `“${name}” 轻轻笑了笑，温柔地说：「${userMessage}… 嗯，我懂你的感受。」`;
+      if (p.includes('温柔') || p.includes('细腻') || p.includes('善解')) {
+        reply = `“${char.name}” 轻轻地说：「${userMsg}… 我明白，一切都会好的。」`;
       } else if (p.includes('毒舌') || p.includes('傲娇') || p.includes('讽刺')) {
-        reply = `“${name}” 冷哼一声：「${userMessage}？就这？你该不会是在开玩笑吧。」`;
+        reply = `“${char.name}” 嗤笑一声：「${userMsg}？你可真会开玩笑。」`;
       } else if (p.includes('活泼') || p.includes('热情') || p.includes('开朗')) {
-        reply = `“${name}” 兴奋地跳起来：「${userMessage}！太棒了！我也这么觉得！！」`;
+        reply = `“${char.name}” 兴奋地拍手：「${userMsg}！太棒啦！我也这样想！」`;
       } else if (p.includes('冷静') || p.includes('理性')) {
-        reply = `“${name}” 推了推眼镜，冷静地分析：「${userMessage}，从逻辑上看… 嗯，有一定道理。」`;
+        reply = `“${char.name}” 推了推眼镜：「${userMsg}… 从逻辑上确实如此。」`;
       } else {
-        reply = `“${name}” 思考了一下，回应道：「${userMessage}… 原来你是这样想的。」`;
+        reply = `“${char.name}” 想了想，说道：「${userMsg}… 嗯，有道理。」`;
       }
-      // 如果设定了外貌或经历，偶尔加入细节
-      if (char.appearance && Math.random() > 0.6) {
-        reply += ` (${char.name}的${char.appearance.slice(0,12)}…)`;
-      }
+      if (char.appearance && Math.random() > 0.7) reply += ` (${char.appearance.slice(0,10)}…)`;
       return reply;
     }
 
-    // 渲染角色列表
-    function renderCharacters() {
-      if (characters.length === 0) {
-        characterListEl.innerHTML = `<div style="color:#6a789a; padding:20px; text-align:center;">还没有角色，点击 “新建” 添加</div>`;
+    // 生成朋友圈动态 (按性格)
+    function generateMoment(char) {
+      if (!char) return '今天天气不错。';
+      const p = (char.personality || '普通').toLowerCase();
+      const texts = [];
+      if (p.includes('温柔')) texts.push('窗外的花开了，好想分享给你。', '今天泡了一杯茉莉花茶，心静。');
+      if (p.includes('毒舌')) texts.push('今天的咖啡真难喝，不如我自己烘的。', '某些人真的没救了。');
+      if (p.includes('活泼')) texts.push('哇！今天遇到一只超可爱的猫！！', '蹦蹦跳跳的一天！');
+      if (p.includes('冷静')) texts.push('观察数据，发现一个有趣的现象。', '理性分析，一切皆可解。');
+      if (texts.length === 0) texts.push('今天也是平凡的一天。', '嗯，记录一下。');
+      return texts[Math.floor(Math.random() * texts.length)];
+    }
+
+    // ---- 渲染 ----
+    function renderChars() {
+      if (chars.length === 0) {
+        charListEl.innerHTML = `<div style="color:#6a789a;padding:20px;text-align:center;">还没有角色</div>`;
         return;
       }
       let html = '';
-      characters.forEach(c => {
-        const activeClass = (c.id === currentSpeakerId) ? 'active' : '';
+      chars.forEach(c => {
+        const active = (c.id === currentSpeakerId) ? 'active' : '';
         html += `
-          <div class="character-card ${activeClass}" data-id="${c.id}">
-            <div class="character-header">
-              <span class="character-name">${c.name} <small>#${c.id}</small></span>
-              <div class="character-actions">
-                <button class="edit-btn" data-id="${c.id}">✎</button>
-                <button class="delete-btn" data-id="${c.id}">✕</button>
-              </div>
+          <div class="char-card ${active}" data-id="${c.id}">
+            <div class="name">${c.name} <small>#${c.id}</small></div>
+            <div class="traits">🧠 ${c.personality || '未设定'}</div>
+            <div class="detail"><span>👤 ${c.appearance || '—'}</span><span>📏 ${c.height || '—'}</span></div>
+            <div class="backstory">📖 ${c.backstory || '暂无'}</div>
+            <div class="char-actions">
+              <button class="edit" data-id="${c.id}">✎</button>
+              <button class="del" data-id="${c.id}">✕</button>
             </div>
-            <div class="character-traits">🧠 ${c.personality || '未设定'}</div>
-            <div class="character-detail-row">
-              <span>👤 ${c.appearance || '—'}</span>
-              <span>📏 ${c.height || '—'}</span>
-            </div>
-            <div class="character-desc">📖 ${c.backstory || '暂无经历'}</div>
           </div>
         `;
       });
-      characterListEl.innerHTML = html;
-
-      // 绑定点击卡片设为当前发言者
-      document.querySelectorAll('.character-card').forEach(card => {
-        card.addEventListener('click', function(e) {
-          // 如果点到按钮内部，不触发
+      charListEl.innerHTML = html;
+      // 绑定点击卡片 -> 设为当前发言者
+      charListEl.querySelectorAll('.char-card').forEach(el => {
+        el.addEventListener('click', function(e) {
           if (e.target.closest('button')) return;
           const id = parseInt(this.dataset.id);
           setCurrentSpeaker(id);
         });
       });
-
-      // 删除/编辑按钮 (事件委托)
-      characterListEl.querySelectorAll('.delete-btn').forEach(btn => {
+      // 删除/编辑
+      charListEl.querySelectorAll('.del').forEach(btn => {
         btn.addEventListener('click', function(e) {
           e.stopPropagation();
           const id = parseInt(this.dataset.id);
-          if (confirm(`确定删除角色吗？`)) {
-            deleteCharacter(id);
-          }
+          if (confirm('删除该角色？')) deleteChar(id);
         });
       });
-      characterListEl.querySelectorAll('.edit-btn').forEach(btn => {
+      charListEl.querySelectorAll('.edit').forEach(btn => {
         btn.addEventListener('click', function(e) {
           e.stopPropagation();
           const id = parseInt(this.dataset.id);
-          openEditModal(id);
+          openModal(id);
         });
       });
-
-      // 更新下拉框
       updateSpeakerSelect();
+      updatePrivateTargets();
     }
-
-    // 当前发言者ID
-    let currentSpeakerId = characters.length > 0 ? characters[0].id : null;
 
     function setCurrentSpeaker(id) {
       currentSpeakerId = id;
-      renderCharacters();
-      // 下拉同步
-      if (speakerSelect) {
-        speakerSelect.value = id;
-      }
+      renderChars();
+      if (speakerSelect) speakerSelect.value = id;
     }
 
-    // 更新下拉框
     function updateSpeakerSelect() {
-      const select = speakerSelect;
-      select.innerHTML = '<option value="">— 选择角色 —</option>';
-      characters.forEach(c => {
-        const option = document.createElement('option');
-        option.value = c.id;
-        option.textContent = c.name;
-        if (c.id === currentSpeakerId) option.selected = true;
-        select.appendChild(option);
+      speakerSelect.innerHTML = '<option value="">— 发言角色 —</option>';
+      chars.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.name;
+        if (c.id === currentSpeakerId) opt.selected = true;
+        speakerSelect.appendChild(opt);
       });
-      // 如果当前选中不在列表中，重置
-      if (currentSpeakerId && !characters.some(c => c.id === currentSpeakerId)) {
-        currentSpeakerId = characters.length > 0 ? characters[0].id : null;
-        if (currentSpeakerId) select.value = currentSpeakerId;
-      } else if (!currentSpeakerId && characters.length > 0) {
-        currentSpeakerId = characters[0].id;
-        select.value = currentSpeakerId;
-      }
-      // 重新渲染列表高亮
-      renderCharacters();
-    }
-
-    // 删除角色
-    function deleteCharacter(id) {
-      if (characters.length <= 1) {
-        alert('至少保留一个角色哦～');
-        return;
-      }
-      characters = characters.filter(c => c.id !== id);
-      if (currentSpeakerId === id) {
-        currentSpeakerId = characters.length > 0 ? characters[0].id : null;
-      }
-      renderCharacters();
-      updateSpeakerSelect();
-    }
-
-    // 新增/编辑 模态框
-    function openEditModal(id = null) {
-      editingId = id;
-      if (id === null) {
-        modalTitle.textContent = '✨ 新建角色';
-        charNameInput.value = '';
-        charPersonalityInput.value = '';
-        charAppearanceInput.value = '';
-        charHeightInput.value = '';
-        charBackstoryInput.value = '';
-      } else {
-        const c = characters.find(ch => ch.id === id);
-        if (!c) return;
-        modalTitle.textContent = `✎ 编辑 ${c.name}`;
-        charNameInput.value = c.name;
-        charPersonalityInput.value = c.personality || '';
-        charAppearanceInput.value = c.appearance || '';
-        charHeightInput.value = c.height || '';
-        charBackstoryInput.value = c.backstory || '';
-      }
-      modalOverlay.classList.add('open');
-    }
-
-    function closeModal() {
-      modalOverlay.classList.remove('open');
-      editingId = null;
-    }
-
-    // 保存角色
-    function saveCharacter() {
-      const name = charNameInput.value.trim();
-      const personality = charPersonalityInput.value.trim();
-      const appearance = charAppearanceInput.value.trim();
-      const height = charHeightInput.value.trim();
-      const backstory = charBackstoryInput.value.trim();
-
-      if (!name) {
-        alert('请填写角色名称');
-        return;
-      }
-
-      if (editingId !== null) {
-        // 编辑
-        const index = characters.findIndex(c => c.id === editingId);
-        if (index !== -1) {
-          characters[index] = {
-            ...characters[index],
-            name,
-            personality: personality || '未设定',
-            appearance: appearance || '未设定',
-            height: height || '未设定',
-            backstory: backstory || '暂无经历',
-          };
-        }
-      } else {
-        // 新增
-        const newChar = {
-          id: nextId++,
-          name,
-          personality: personality || '未设定',
-          appearance: appearance || '未设定',
-          height: height || '未设定',
-          backstory: backstory || '暂无经历',
-        };
-        characters.push(newChar);
-        // 自动设为当前
-        currentSpeakerId = newChar.id;
-      }
-      closeModal();
-      renderCharacters();
-      updateSpeakerSelect();
-      // 如果没有当前发言者，设置
-      if (!currentSpeakerId && characters.length > 0) {
-        currentSpeakerId = characters[0].id;
-        renderCharacters();
-        updateSpeakerSelect();
+      if (currentSpeakerId && !chars.some(c=>c.id===currentSpeakerId)) {
+        currentSpeakerId = chars.length? chars[0].id : null;
+        if (currentSpeakerId) speakerSelect.value = currentSpeakerId;
+      } else if (!currentSpeakerId && chars.length) {
+        currentSpeakerId = chars[0].id;
+        speakerSelect.value = currentSpeakerId;
       }
     }
 
-    // 发送消息
-    function sendMessage() {
-      const speakerId = parseInt(speakerSelect.value);
-      if (!speakerId) {
-        alert('请选择一个角色发言');
-        return;
+    function updatePrivateTargets() {
+      privateTargetSelect.innerHTML = '<option value="">选择私聊对象</option>';
+      chars.forEach(c => {
+        if (c.id === currentSpeakerId) return;
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.name;
+        privateTargetSelect.appendChild(opt);
+      });
+      if (privateTargetId && !chars.some(c=>c.id===privateTargetId)) {
+        privateTargetId = null;
       }
-      const char = characters.find(c => c.id === speakerId);
-      if (!char) {
-        alert('角色不存在，请重新选择');
-        return;
-      }
-      const userMsg = chatInput.value.trim();
-      if (!userMsg) {
-        alert('请输入消息内容');
-        return;
-      }
-
-      // 添加用户消息 (显示为触发)
-      const time = formatTime();
-      chatLog.push({ sender: '你', content: userMsg, time: time });
-
-      // 角色回复 (按照设定)
-      const reply = generateReplyByCharacter(char, userMsg);
-      chatLog.push({ sender: char.name, content: reply, time: formatTime() });
-
-      chatInput.value = '';
-      renderChatLog();
-      // 滚动到底部
-      chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
-      // 自动切换高亮至发言角色
-      setCurrentSpeaker(char.id);
+      if (privateTargetId) privateTargetSelect.value = privateTargetId;
+      else privateTargetSelect.value = '';
     }
 
-    // 渲染聊天记录
-    function renderChatLog() {
+    // 渲染聊天
+    function renderChat() {
       if (chatLog.length === 0) {
-        chatMessagesEl.innerHTML = `<div class="empty-hint">💬 发送消息，角色将按设定回复…</div>`;
+        chatMsgsEl.innerHTML = `<div style="color:#6a789a;text-align:center;padding:30px 0;">💬 开始聊天吧</div>`;
         return;
       }
       let html = '';
-      chatLog.forEach(msg => {
-        const isMe = msg.sender === '你';
+      let filtered = chatLog;
+      if (isPrivateMode && privateTargetId) {
+        const target = chars.find(c=>c.id===privateTargetId);
+        if (target) {
+          filtered = chatLog.filter(m => 
+            (m.sender === target.name || m.sender === (chars.find(c=>c.id===currentSpeakerId)?.name || '')) &&
+            (m.private === true && m.target === target.name)
+          );
+        } else filtered = [];
+      } else {
+        // 群聊模式：过滤掉私聊消息
+        filtered = chatLog.filter(m => !m.private);
+      }
+      if (filtered.length === 0) {
+        chatMsgsEl.innerHTML = `<div style="color:#6a789a;text-align:center;padding:20px 0;">暂无消息</div>`;
+        return;
+      }
+      filtered.forEach(m => {
         html += `
-          <div class="message" style="${isMe ? 'border-left-color: #f5c542;' : ''}">
-            <div class="msg-sender">
-              ${msg.sender}
-              ${isMe ? '<span class="badge">你</span>' : '<span class="badge">角色</span>'}
-            </div>
-            <div class="msg-content">${msg.content}</div>
-            <div class="msg-meta">${msg.time || ''}</div>
+          <div class="msg">
+            <div class="sender">${m.sender}</div>
+            <div class="content">${m.content}</div>
+            <div class="time">${m.time || ''}</div>
           </div>
         `;
       });
-      chatMessagesEl.innerHTML = html;
+      chatMsgsEl.innerHTML = html;
+      chatMsgsEl.scrollTop = chatMsgsEl.scrollHeight;
     }
 
-    // ----- 绑定事件 -----
-    sendBtn.addEventListener('click', sendMessage);
-    chatInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        sendMessage();
+    // 渲染朋友圈
+    function renderMoments() {
+      if (moments.length === 0) {
+        momentListEl.innerHTML = `<div style="color:#6a789a;text-align:center;padding:10px 0;">暂无动态</div>`;
+        return;
       }
-    });
-
-    addBtn.addEventListener('click', () => openEditModal(null));
-
-    modalCancelBtn.addEventListener('click', closeModal);
-    modalOverlay.addEventListener('click', function(e) {
-      if (e.target === this) closeModal();
-    });
-    modalSaveBtn.addEventListener('click', saveCharacter);
-
-    // 角色列表点击编辑/删除通过委托处理
-
-    // 初始化渲染
-    function init() {
-      renderCharacters();
-      renderChatLog();
-      updateSpeakerSelect();
-      // 默认选中第一个
-      if (characters.length > 0) {
-        currentSpeakerId = characters[0].id;
-        speakerSelect.value = currentSpeakerId;
-        renderCharacters();
-      }
-      // 监听下拉变化同步高亮
-      speakerSelect.addEventListener('change', function() {
-        const val = parseInt(this.value);
-        if (val) {
-          setCurrentSpeaker(val);
-        }
+      let html = '';
+      moments.slice().reverse().forEach(m => {
+        html += `
+          <div class="moment-item">
+            <div class="m-name">${m.sender}</div>
+            <div class="m-text">${m.text}</div>
+            <div class="m-time">${m.time || ''}</div>
+          </div>
+        `;
       });
+      momentListEl.innerHTML = html;
+    }
+
+    // ---- 操作 ----
+    function deleteChar(id) {
+      if (chars.length <= 1) { alert('至少保留一个角色'); return; }
+      chars = chars.filter(c => c.id !== id);
+      if (currentSpeakerId === id) {
+        currentSpeakerId = chars.length? chars[0].id : null;
+      }
+      if (privateTargetId === id) privateTargetId = null;
+      renderChars();
+      renderChat();
+    }
+
+    function openModal(id=null) {
+      editingId = id;
+      if (id === null) {
+        modalTitle.textContent = '✨ 新建角色';
+        cName.value = ''; cPersonality.value = ''; cAppearance.value = ''; cHeight.value = ''; cBackstory.value = '';
+      } else {
+        const c = chars.find(ch => ch.id === id);
+        if (!c) return;
+        modalTitle.textContent = `✎ 编辑 ${c.name}`;
+        cName.value = c.name;
+        cPersonality.value = c.personality || '';
+        cAppearance.value = c.appearance || '';
+        cHeight.value = c.height || '';
+        cBackstory.value = c.backstory || '';
+      }
+      modal.classList.add('open');
+    }
+
+    function closeModal() { modal.classList.remove('open'); editingId = null; }
+
+    function saveChar() {
+      const name = cName.value.trim();
+      if (!name) { alert('请输入名称'); return; }
+      const personality = cPersonality.value.trim() || '未设定';
+      const appearance = cAppearance.value.trim() || '未设定';
+      const height = cHeight.value.trim() || '未设定';
+      const backstory = cBackstory.value.trim() || '暂无经历';
+
+      if (editingId !== null) {
+        const idx = chars.findIndex(c => c.id === editingId);
+        if (idx !== -1) {
+          chars[idx] = { ...chars[idx], name, personality, appearance, height, backstory };
+        }
+      } else {
+        const newChar = { id: nextId++, name, personality, appearance, height, backstory };
+        chars.push(newChar);
+        currentSpeakerId = newChar.id;
+      }
+      closeModal();
+      renderChars();
+      renderChat();
+      renderMoments();
+      updatePrivateTargets();
+    }
+
+    // 发送消息 (群聊/私聊)
+    function sendMessage() {
+      const speakerId = parseInt(speakerSelect.value);
+      if (!speakerId) { alert('请选择发言角色'); return; }
+      const char = chars.find(c => c.id === speakerId);
+      if (!char) { alert('角色不存在'); return; }
+      const userMsg = chatInput.value.trim();
+      if (!userMsg) { alert('输入消息'); return; }
+
+      let targetName = null;
+      let isPrivate = false;
+      if (isPrivateMode && privateTargetId) {
+        const target = chars.find(c => c.id === privateTargetId);
+        if (target) { targetName = target.name; isPrivate = true; }
+        else { alert('请选择私聊对象'); return; }
+      }
+
+      // 用户消息 (显示触发)
+      const time = timeStr();
+      chatLog.push({ sender: '你', content: userMsg, time, private: isPrivate, target: targetName });
+
+      // 角色回复
+      const reply = generateReply(char, userMsg);
+      chatLog.push({ sender: char.name, content: reply, time: timeStr(), private: isPrivate, target: targetName });
+
+      chatInput.value = '';
+      renderChat();
+      // 切换高亮
+      setCurrentSpeaker(char.id);
+      updatePrivateTargets();
+    }
+
+    // 发布朋友圈 (由当前发言角色发布)
+    function addMoment() {
+      if (!currentSpeakerId) { alert('请先选择一个角色'); return; }
+      const char = chars.find(c => c.id === currentSpeakerId);
+      if (!char) return;
+      const text = generateMoment(char);
+      moments.push({ sender: char.name, text, time: timeStr() });
+      renderMoments();
+    }
+
+    // ---- 模式切换 ----
+    function setGroupMode() {
+      isPrivateMode = false;
+      privateTargetId = null;
+      groupChatBtn.classList.add('active');
+      privateChatBtn.classList.remove('active');
+      privateTargetSelect.style.display = 'none';
+      renderChat();
+    }
+    function setPrivateMode() {
+      isPrivateMode = true;
+      privateChatBtn.classList.add('active');
+      groupChatBtn.classList.remove('active');
+      privateTargetSelect.style.display = 'inline-block';
+      if (!privateTargetId) {
+        const first = chars.find(c => c.id !== currentSpeakerId);
+        if (first) privateTargetId = first.id;
+      }
+      privateTargetSelect.value = privateTargetId || '';
+      renderChat();
+    }
+
+    // ---- 初始化 ----
+    function initDefault() {
+      chars = [
+        { id: nextId++, name: '林汐', personality: '温柔细腻，善解人意', appearance: '黑长直发，琥珀眼眸', height: '165cm', backstory: '山村支教三年，爱植物' },
+        { id: nextId++, name: '陆沉', personality: '毒舌傲娇，内心正直', appearance: '银灰短发，黑曜石耳钉', height: '188cm', backstory: '前黑客，现咖啡馆老板' },
+        { id: nextId++, name: '苏晚', personality: '热情活泼，乐观开朗', appearance: '金色卷发，雀斑脸', height: '158cm', backstory: '独立音乐人，爱旅行' },
+      ];
+      currentSpeakerId = chars[0].id;
+      chatLog = [
+        { sender: '林汐', content: '今天院子里开了第一朵茉莉，好香啊。', time: '10:23' },
+        { sender: '陆沉', content: '哼，花有什么好闻的，不如咖啡豆。', time: '10:25' },
+        { sender: '苏晚', content: '哇！茉莉！我要去看！', time: '10:26' },
+      ];
+      moments = [
+        { sender: '林汐', text: '茉莉花开了，岁月静好。', time: '10:30' },
+        { sender: '陆沉', text: '今天的豆子烘焙度刚好，完美。', time: '10:35' },
+        { sender: '苏晚', text: '新写了一首歌，好开心！！', time: '10:40' },
+      ];
+    }
+    initDefault();
+
+    // ---- 绑定事件 ----
+    sendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); sendMessage(); } });
+    addCharBtn.addEventListener('click', () => openModal(null));
+    modalCancel.addEventListener('click', closeModal);
+    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+    modalSave.addEventListener('click', saveChar);
+    groupChatBtn.addEventListener('click', setGroupMode);
+    privateChatBtn.addEventListener('click', setPrivateMode);
+    privateTargetSelect.addEventListener('change', function() {
+      privateTargetId = parseInt(this.value) || null;
+      renderChat();
+    });
+    addMomentBtn.addEventListener('click', addMoment);
+
+    // 下拉选择变化同步高亮
+    speakerSelect.addEventListener('change', function() {
+      const val = parseInt(this.value);
+      if (val) setCurrentSpeaker(val);
+    });
+
+    // 初次渲染
+    function init() {
+      renderChars();
+      renderChat();
+      renderMoments();
+      updatePrivateTargets();
+      if (chars.length) {
+        currentSpeakerId = chars[0].id;
+        speakerSelect.value = currentSpeakerId;
+        renderChars();
+      }
+      setGroupMode(); // 默认群聊
     }
     init();
   })();
